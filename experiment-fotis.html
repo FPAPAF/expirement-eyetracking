@@ -661,7 +661,35 @@
 
 <div id="toast" class="toast">Αποθηκεύτηκε στο Google Sheet</div>
 
-<script src="https://cdn.jsdelivr.net/npm/webgazer@4.0.4/dist/webgazer.min.js"></script>
+<script>
+    (function loadWebgazer() {
+        const urls = [
+            'https://cdn.jsdelivr.net/npm/webgazer@4.0.4/dist/webgazer.min.js',
+            'https://unpkg.com/webgazer@4.0.4/dist/webgazer.min.js'
+        ];
+        function loadScript(url) {
+            return new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = url;
+                s.async = true;
+                s.onload = resolve;
+                s.onerror = reject;
+                document.head.appendChild(s);
+            });
+        }
+        window.__webgazerReady = (async () => {
+            for (const url of urls) {
+                try {
+                    await loadScript(url);
+                    if (window.webgazer) return true;
+                } catch (e) {
+                    // try next URL
+                }
+            }
+            return false;
+        })();
+    })();
+</script>
 
 <script>
     // === Google Sheets Web App URL (αντικατάστησε μετά το Publish) ===
@@ -864,7 +892,7 @@
                 updateWebgazerStatus(false, 'Eye Tracking: Αναμονή άδειας κάμερας...');
                 const permissionGranted = await requestCameraPermission();
                 if (!permissionGranted) return;
-                initWebGazer(true);
+                await initWebGazer(true);
                 showCalibration();
                 return;
             }
@@ -1113,8 +1141,11 @@
         };
     }
 
-    function initWebGazer(showPreview = false) {
+    async function initWebGazer(showPreview = false) {
         if (webgazerInitialized) return;
+        if (window.__webgazerReady) {
+            await window.__webgazerReady;
+        }
         if (!isSecureContext && location.hostname !== 'localhost') {
             updateWebgazerStatus(false, 'Eye Tracking: απαιτεί HTTPS');
             return;
