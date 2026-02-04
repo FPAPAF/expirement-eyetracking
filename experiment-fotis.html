@@ -303,6 +303,31 @@
             box-shadow: 0 8px 18px rgba(0,0,0,0.25);
         }
 
+        /* WebGazer preview & gaze dot visibility */
+        #webgazerVideoContainer,
+        #webgazerVideoFeed,
+        #webgazerVideoCanvas,
+        #webgazerFaceOverlay,
+        #webgazerFaceFeedbackBox {
+            position: fixed !important;
+            bottom: 16px !important;
+            right: 16px !important;
+            width: 180px !important;
+            height: 135px !important;
+            z-index: 100002 !important;
+            border-radius: 8px;
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+        }
+
+        #webgazerGazeDot {
+            z-index: 100003 !important;
+            width: 12px !important;
+            height: 12px !important;
+            background: #4fc3f7 !important;
+            border: 2px solid #0d47a1 !important;
+            box-shadow: 0 0 8px rgba(79, 195, 247, 0.9);
+        }
+
         .status-dot {
             width: 9px;
             height: 9px;
@@ -879,7 +904,7 @@
         document.getElementById('calibration-status').textContent = 'Πρόοδος: 0/45 κλικ';
         document.getElementById('calibration-start-btn').classList.add('hidden');
         document.getElementById('calibration-overlay').style.display = 'flex';
-        updateWebgazerStatus(false, 'Eye Tracking: Βαθμονόμηση...');
+        updateWebgazerStatus(true, 'Eye Tracking: Βαθμονόμηση...');
     }
 
     function hideCalibration() {
@@ -1119,6 +1144,9 @@
             webgazer.showPredictionPoints(!!showPreview);
             webgazer.applyKalmanFilter(true);
         }
+
+        // Ensure gaze dot stays visible
+        webgazer.showPredictionPoints(true);
 
         setTimeout(() => {
             updateWebgazerStatus(true, 'Eye Tracking: Ενεργό');
