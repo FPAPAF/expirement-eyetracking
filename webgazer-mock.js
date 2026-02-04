@@ -70,7 +70,10 @@ window.webgazer = (function() {
                     z-index: 100002;
                     overflow: hidden;
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                    outline: none !important;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
                 `;
+                container.tabIndex = -1; // Remove from tab order
                 
                 // Create fake video feed
                 const canvas = document.createElement('canvas');
