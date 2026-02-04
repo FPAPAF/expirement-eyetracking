@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Node
+node_modules/
+
+# Vercel
+.vercel/
+
+# Env
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
