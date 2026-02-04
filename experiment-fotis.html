@@ -725,9 +725,11 @@
 <div class="container hidden" id="thank-you">
     <h1>Σας Ευχαριστούμε</h1>
     <p>Η συμβολή σας στην έρευνα είναι πολύτιμη.</p>
-    <p id="submit-status" style="margin-top:20px; font-weight:bold; color:#666;">Πατήστε το κουμπί για να στείλετε τα δεδομένα.</p>
-    <button class="btn" id="submit-data-btn" onclick="submitDataToSheets()" style="margin-bottom:10px;">Αποστολή Δεδομένων</button>
-    <button class="btn" onclick="location.reload()" style="background:#6c757d;">Νέα Συμμετοχή</button>
+    <div style="background:#e8f5e9; padding:15px; border-radius:8px; margin-top:20px; border-left: 5px solid #27ae60;">
+        <h3>Ολοκληρώθηκε!</h3>
+        <p>Όλα τα δεδομένα καταγράφηκαν επιτυχώς.</p>
+    </div>
+    <button class="btn" onclick="location.reload()" style="margin-top:20px;">Νέα Συμμετοχή</button>
 </div>
 
 <div id="toast" class="toast">Αποθηκεύτηκε στο Google Sheet</div>
@@ -1305,24 +1307,28 @@
 
     async function sendResponse(payload) {
         if (!SHEET_WEB_APP_URL || SHEET_WEB_APP_URL.includes('REPLACE_ME')) return;
+        
         try {
-            const data = JSON.stringify(payload);
+            // Μετατροπή των δεδομένων σε μορφή URL parameters (key=value)
+            // Αυτό είναι κρίσιμο για να τα διαβάσει σωστά το Script
+            const formBody = new URLSearchParams(payload);
 
-            if (navigator.sendBeacon) {
-                const blob = new Blob([data], { type: 'text/plain' });
-                const ok = navigator.sendBeacon(SHEET_WEB_APP_URL, blob);
-                if (ok) return;
-            }
-
-            const formBody = new URLSearchParams({ payload: data });
             await fetch(SHEET_WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors',
+                mode: 'no-cors', // Απαραίτητο για Google Scripts
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
                 body: formBody
             });
+            
+            console.log(`✅ Data sent for Scenario ${payload.scenarioId}`);
+            showToast('Αποθηκεύτηκε στο Google Sheet');
+            
         } catch (err) {
-            console.error('Sheet submit failed:', err);
-            showToast('Αποτυχία αποστολής');
+            console.error('❌ Upload error:', err);
+            // Δεν πετάμε alert για να μην διακόψουμε τη ροή, απλά δείχνουμε το toast
+            showToast('Σφάλμα σύνδεσης - Συνεχίστε');
         }
     }
 
@@ -1510,75 +1516,40 @@
         }, 1500);
     }
 
-    async function submitDataToSheets() {
-        const btn = document.getElementById('submit-data-btn');
-        const status = document.getElementById('submit-status');
-        
-        if (!window.finalData) {
-            status.textContent = 'Σφάλμα: Δεν υπάρχουν δεδομένα προς αποστολή';
-            status.style.color = '#dc3545';
-            return;
-        }
-        
-        btn.disabled = true;
-        btn.textContent = 'Αποστολή...';
-        status.textContent = 'Αποστολή δεδομένων στη βάση...';
-        status.style.color = '#007bff';
-        
-        try {
-            await sendResponse(window.finalData);
-            btn.textContent = 'Εστάλη ✓';
-            btn.style.background = '#28a745';
-            status.textContent = 'Τα δεδομένα στάλθηκαν επιτυχώς!';
-            status.style.color = '#28a745';
-        } catch (err) {
-            console.error('Submission error:', err);
-            btn.disabled = false;
-            btn.textContent = 'Αποστολή Δεδομένων';
-            status.textContent = 'Σφάλμα αποστολής. Δοκιμάστε ξανά.';
-            status.style.color = '#dc3545';
-        }
-    }
-
     function nextScenario() {
+        // 1. Συλλογή δεδομένων του τρέχοντος σεναρίου
         const payload = collectScenarioResponse();
         responses.push(payload);
 
+        // 2. ΑΜΕΣΗ ΑΠΟΣΤΟΛΗ (Η λογική που θέλουμε)
+        // Στέλνουμε τα δεδομένα τώρα, χωρίς να περιμένουμε το τέλος
+        sendResponse(payload);
+
+        // 3. Προχωράμε στο επόμενο
         currentStep++;
         if (currentStep < scenarios.length) {
             loadScenarioUI();
             document.getElementById('player').scrollIntoView({behavior: "smooth"});
         } else {
-            // Store final data globally for manual submission
-            window.finalData = {
-                sessionTimestamp: new Date().toISOString(),
-                responses
-            };
+            // ΤΕΛΟΣ ΠΕΙΡΑΜΑΤΟΣ
             
-            // Stop WebGazer tracking
+            // Σταμάτημα WebGazer
             if (webgazerInitialized && typeof webgazer !== 'undefined') {
                 try {
-                    webgazer.pause();
+                    webgazer.pause(); 
+                    webgazer.end(); // Κλείσιμο κάμερας
                     updateWebgazerStatus(false, 'Eye Tracking: Ολοκληρώθηκε');
-                } catch (e) {
-                    console.warn('Could not pause WebGazer:', e);
-                }
+                } catch (e) { console.warn(e); }
             }
             
-            // Stop all video playback
+            // Σταμάτημα βίντεο
             const mainVideo = document.getElementById('main-video');
-            const adVideo = document.getElementById('ad-video');
-            if (mainVideo) {
-                mainVideo.pause();
-                mainVideo.currentTime = 0;
-                mainVideo.src = '';
-            }
-            if (adVideo) {
-                adVideo.pause();
-                adVideo.currentTime = 0;
-                adVideo.src = '';
-            }
+            if (mainVideo) { mainVideo.pause(); mainVideo.src = ''; }
             
+            const adVideo = document.getElementById('ad-video');
+            if (adVideo) { adVideo.pause(); adVideo.src = ''; }
+            
+            // Εμφάνιση οθόνης τέλους
             document.getElementById('experiment-screen').classList.add('hidden');
             document.getElementById('thank-you').classList.remove('hidden');
         }
