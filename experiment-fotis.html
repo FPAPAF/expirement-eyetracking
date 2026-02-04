@@ -661,34 +661,24 @@
 
 <div id="toast" class="toast">Αποθηκεύτηκε στο Google Sheet</div>
 
+<script src="webgazer-loader.js"></script>
 <script>
-    (function loadWebgazer() {
-        const urls = [
-            'https://cdn.jsdelivr.net/npm/webgazer@4.0.4/dist/webgazer.min.js',
-            'https://unpkg.com/webgazer@4.0.4/dist/webgazer.min.js'
-        ];
-        function loadScript(url) {
-            return new Promise((resolve, reject) => {
-                const s = document.createElement('script');
-                s.src = url;
-                s.async = true;
-                s.onload = resolve;
-                s.onerror = reject;
-                document.head.appendChild(s);
-            });
-        }
-        window.__webgazerReady = (async () => {
-            for (const url of urls) {
-                try {
-                    await loadScript(url);
-                    if (window.webgazer) return true;
-                } catch (e) {
-                    // try next URL
-                }
+    // Wait for WebGazer to be available
+    window.__webgazerReady = new Promise((resolve) => {
+        const check = setInterval(() => {
+            if (window.webgazer) {
+                clearInterval(check);
+                console.log('✅ WebGazer ready');
+                resolve(true);
             }
-            return false;
-        })();
-    })();
+        }, 100);
+        // Timeout after 10 seconds
+        setTimeout(() => {
+            clearInterval(check);
+            console.error('❌ WebGazer timeout');
+            resolve(false);
+        }, 10000);
+    });
 </script>
 
 <script>
@@ -1143,9 +1133,16 @@
 
     async function initWebGazer(showPreview = false) {
         if (webgazerInitialized) return;
+        
+        // Wait for WebGazer to load
         if (window.__webgazerReady) {
-            await window.__webgazerReady;
+            const ready = await window.__webgazerReady;
+            if (!ready) {
+                updateWebgazerStatus(false, 'WebGazer: δεν φορτώθηκε');
+                return;
+            }
         }
+        
         if (!isSecureContext && location.hostname !== 'localhost') {
             updateWebgazerStatus(false, 'Eye Tracking: απαιτεί HTTPS');
             return;
