@@ -1259,10 +1259,22 @@
     async function sendResponse(payload) {
         if (!SHEET_WEB_APP_URL || SHEET_WEB_APP_URL.includes('REPLACE_ME')) return;
         try {
+            const data = JSON.stringify(payload);
+
+            if (navigator.sendBeacon) {
+                const blob = new Blob([data], { type: 'text/plain' });
+                const ok = navigator.sendBeacon(SHEET_WEB_APP_URL, blob);
+                if (ok) {
+                    showToast('Αποθηκεύτηκε στο Google Sheet');
+                    return;
+                }
+            }
+
+            const formBody = new URLSearchParams({ payload: data });
             await fetch(SHEET_WEB_APP_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                mode: 'no-cors',
+                body: formBody
             });
             showToast('Αποθηκεύτηκε στο Google Sheet');
         } catch (err) {
