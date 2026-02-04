@@ -290,35 +290,52 @@
         .webgazer-status {
             position: fixed;
             top: 12px;
-            left: 12px;
-            background: rgba(0,0,0,0.82);
+            right: 24px;
+            left: auto;
+            background: rgba(0,0,0,0.85);
             color: #fff;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
             z-index: 100001;
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         /* WebGazer preview & gaze dot visibility */
-        #webgazerVideoContainer,
-        #webgazerVideoFeed,
-        #webgazerVideoCanvas,
-        #webgazerFaceOverlay,
-        #webgazerFaceFeedbackBox {
+        #webgazerVideoContainer {
             position: fixed !important;
             bottom: 16px !important;
             left: 16px !important;
-            width: 180px !important;
-            height: 135px !important;
+            width: 160px !important;
+            height: 120px !important;
             z-index: 100002 !important;
             border-radius: 8px;
-            border: 2px solid #00ff00 !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 255, 0, 0.3) !important;
+            overflow: hidden;
+            border: 2px solid #27ae60 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
             display: block !important;
+        }
+
+        #webgazerVideoFeed,
+        #webgazerVideoCanvas {
+            position: fixed !important;
+            bottom: 16px !important;
+            left: 16px !important;
+            width: 160px !important;
+            height: 120px !important;
+            z-index: 100002 !important;
+            border-radius: 8px;
+            overflow: hidden;
+            display: block !important;
+        }
+
+        #webgazerFaceFeedbackBox, 
+        #webgazerFaceOverlay {
+            display: none !important;
         }
 
         #webgazerGazeDot,
