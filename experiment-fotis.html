@@ -319,13 +319,16 @@
             box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
         }
 
-        #webgazerGazeDot {
+        #webgazerGazeDot,
+        .webgazerGazeDot {
             z-index: 100003 !important;
             width: 12px !important;
             height: 12px !important;
             background: #4fc3f7 !important;
             border: 2px solid #0d47a1 !important;
             box-shadow: 0 0 8px rgba(79, 195, 247, 0.9);
+            display: block !important;
+            pointer-events: none !important;
         }
 
         .status-dot {
@@ -1137,20 +1140,40 @@
 
         if (typeof webgazer.showVideoPreview === 'function') {
             webgazer.showVideoPreview(!!showPreview)
-                .showPredictionPoints(!!showPreview)
+                .showPredictionPoints(true)
                 .applyKalmanFilter(true);
         } else {
             webgazer.showVideo(!!showPreview);
-            webgazer.showPredictionPoints(!!showPreview);
+            webgazer.showPredictionPoints(true);
             webgazer.applyKalmanFilter(true);
         }
 
-        // Ensure gaze dot stays visible
-        webgazer.showPredictionPoints(true);
+        ensureWebgazerUI();
 
         setTimeout(() => {
             updateWebgazerStatus(true, 'Eye Tracking: Ενεργό');
         }, 1500);
+    }
+
+    function ensureWebgazerUI() {
+        let tries = 0;
+        const timer = setInterval(() => {
+            tries += 1;
+            const dot = document.getElementById('webgazerGazeDot');
+            const video = document.getElementById('webgazerVideoFeed');
+            const canvas = document.getElementById('webgazerVideoCanvas');
+            if (dot) dot.style.display = 'block';
+            if (video) video.style.display = 'block';
+            if (canvas) canvas.style.display = 'block';
+
+            if (dot || video || tries > 20) {
+                clearInterval(timer);
+                if (!dot && !video) {
+                    updateWebgazerStatus(false, 'Eye Tracking: δεν εμφανίστηκε η κάμερα');
+                    showToast('Δεν εμφανίστηκε το παράθυρο κάμερας του WebGazer.');
+                }
+            }
+        }, 250);
     }
 
     function updateWebgazerStatus(active, message) {
