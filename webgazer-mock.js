@@ -65,12 +65,11 @@ window.webgazer = (function() {
                     width: 180px;
                     height: 135px;
                     background: #000;
-                    border: none;
+                    border: 2px solid #00ff00;
                     border-radius: 8px;
                     z-index: 100002;
                     overflow: hidden;
-                    box-shadow: inset 0 0 0 1px rgba(102, 126, 234, 0.2), 0 4px 12px rgba(0, 0, 0, 0.4);
-                    outline: none !important;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 255, 0, 0.3);
                 `;
                 container.tabIndex = -1;
                 
