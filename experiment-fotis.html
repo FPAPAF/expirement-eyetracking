@@ -1525,6 +1525,31 @@
                 sessionTimestamp: new Date().toISOString(),
                 responses
             });
+            
+            // Stop WebGazer tracking
+            if (webgazerInitialized && typeof webgazer !== 'undefined') {
+                try {
+                    webgazer.pause();
+                    updateWebgazerStatus(false, 'Eye Tracking: Ολοκληρώθηκε');
+                } catch (e) {
+                    console.warn('Could not pause WebGazer:', e);
+                }
+            }
+            
+            // Stop all video playback
+            const mainVideo = document.getElementById('main-video');
+            const adVideo = document.getElementById('ad-video');
+            if (mainVideo) {
+                mainVideo.pause();
+                mainVideo.currentTime = 0;
+                mainVideo.src = '';
+            }
+            if (adVideo) {
+                adVideo.pause();
+                adVideo.currentTime = 0;
+                adVideo.src = '';
+            }
+            
             document.getElementById('experiment-screen').classList.add('hidden');
             document.getElementById('thank-you').classList.remove('hidden');
         }
