@@ -734,6 +734,216 @@
             }
         }
 
+        /* === ADDITIONAL MOBILE FIXES === */
+        @media (max-width: 768px) {
+            /* Flexbox για scenario header */
+            #experiment-screen > div:first-child {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start !important;
+            }
+
+            #experiment-screen > div:first-child span {
+                font-size: 11px !important;
+            }
+
+            /* Ad controls με wrap για πολύ μικρές οθόνες */
+            .ad-controls {
+                flex-wrap: wrap;
+                gap: 8px;
+                height: auto;
+                min-height: 46px;
+                padding: 8px 12px;
+            }
+
+            .ad-controls > div {
+                flex-wrap: wrap;
+            }
+
+            /* Skip button πιο εμφανές */
+            #skip-container {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                margin-top: 4px;
+            }
+
+            .skip-btn {
+                width: auto;
+                min-width: 120px;
+            }
+
+            /* Toast notifications */
+            .toast {
+                right: 10px;
+                bottom: 10px;
+                left: 10px;
+                text-align: center;
+                font-size: 13px;
+            }
+
+            /* Intro hero */
+            .intro-hero h3 {
+                font-size: 16px;
+            }
+
+            /* Thank you screen */
+            #thank-you h1 {
+                font-size: 24px;
+            }
+
+            #thank-you h3 {
+                font-size: 16px;
+            }
+
+            /* Calibration overlay */
+            .calibration-overlay {
+                padding: 12px;
+            }
+
+            .calibration-title {
+                font-size: 18px;
+            }
+
+            .calibration-subtitle {
+                font-size: 13px;
+            }
+
+            .calibration-footer {
+                font-size: 12px;
+            }
+
+            /* Video wrapper - ensure aspect ratio */
+            .video-wrapper {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            /* Play button overlay - touch target */
+            .play-button-overlay {
+                cursor: pointer;
+                -webkit-tap-highlight-color: rgba(0,0,0,0.2);
+            }
+
+            .play-triangle {
+                width: 0;
+                height: 0;
+                border-top: 15px solid transparent;
+                border-bottom: 15px solid transparent;
+                border-left: 24px solid white;
+            }
+
+            /* Content status - μικρότερο */
+            .sim-text {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+
+            /* Spinner */
+            .spinner {
+                width: 24px;
+                height: 24px;
+            }
+
+            /* Progress bar */
+            .progress-bar {
+                height: 5px;
+            }
+
+            /* Overflow fix για πολύ μακριά κείμενα */
+            #scenario-instruction,
+            #scenario-desc {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            /* Question labels */
+            .question-block label {
+                display: block;
+                margin-bottom: 8px;
+                line-height: 1.4;
+            }
+
+            /* Select boxes - πιο μεγάλα για touch */
+            select {
+                min-height: 44px;
+                background-position: right 10px center;
+                background-size: 12px;
+            }
+
+            /* Input text fields */
+            input[type="text"],
+            input[type="number"] {
+                min-height: 44px;
+            }
+
+            /* Radio buttons - μεγαλύτερα touch targets */
+            .likert-option input[type="radio"] {
+                width: 20px;
+                height: 20px;
+                margin: 6px auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Ad timer και website info σε στήλες */
+            .ad-controls > div:first-child {
+                flex-direction: column;
+                gap: 4px;
+                align-items: flex-start;
+            }
+
+            #ad-website {
+                font-size: 10px !important;
+            }
+
+            /* Calibration grid - 2 columns για πολύ μικρές οθόνες */
+            .calibration-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Ensure nth dot is centered */
+            .calib-dot:last-child {
+                grid-column: 1 / -1;
+            }
+
+            /* Likert - stack vertically αν δεν χωράει */
+            .likert-scale {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            /* Notice card */
+            .notice-card > div {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+        }
+
+        /* Landscape orientation fixes */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .calibration-card {
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .calibration-grid {
+                gap: 8px;
+            }
+
+            .calib-dot {
+                width: 40px;
+                height: 40px;
+                font-size: 12px;
+            }
+
+            #webgazerVideoContainer {
+                width: 180px !important;
+                height: 135px !important;
+                margin: 8px;
+            }
+        }
+
     </style>
 </head>
 <body>
