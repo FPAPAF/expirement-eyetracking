@@ -535,16 +535,13 @@
     <p style="text-align:center; color:#666;">Πανεπιστήμιο Πατρών - Τμήμα Μηχανικών Η/Υ & Πληροφορικής</p>
     <p style="text-align:center; color:#666;">ΠΑΠΑΦΩΤΙΟΥ ΦΩΤΙΟΣ</p>
     <hr>
-    <div class="intro-hero">
-        <h3>Καλώς ήρθατε στο πείραμα</h3>
-        <p style="margin:0; color:#4a5b78;">Η συμμετοχή σας είναι ανώνυμη και θα βοηθήσει στην έρευνα για την αποτελεσματικότητα των in‑stream διαφημίσεων.</p>
-    </div>
+   
     <div class="notice-card">
         <span class="notice-pill">ΣΗΜΑΝΤΙΚΟ</span>
         <div>Αν έχετε ενεργό ad blocker, το πείραμα ενδέχεται να μη λειτουργήσει σωστά. Παρακαλούμε απενεργοποιήστε τον προσωρινά.</div>
         <div>Η καλύτερη εμπειρία/ακρίβεια επιτυγχάνεται σε υπολογιστή (Desktop/Laptop).</div>
     </div>
-    <p>Καλώς ήρθατε. Η παρούσα έρευνα διερευνά πώς αντιλαμβάνονται οι χρήστες διαφορετικούς τύπους In-stream διαφημίσεων (ενσωματωμένων στο βίντεο), καθώς και άλλες μορφές ψηφιακής διαφήμισης.</p>
+    <p>Η παρούσα έρευνα διερευνά πώς αντιλαμβάνονται οι χρήστες διαφορετικούς τύπους In-stream διαφημίσεων (ενσωματωμένων στο βίντεο), καθώς και άλλες μορφές ψηφιακής διαφήμισης.</p>
     <p>Η έρευνα πραγματοποιείται στο πλαίσιο διπλωματικής εργασίας. Τα δεδομένα που θα συλλεχθούν είναι απολύτως ανώνυμα και θα χρησιμοποιηθούν αποκλειστικά για ακαδημαϊκούς σκοπούς.</p>
     <p>Θα σας ζητηθεί να παρακολουθήσετε προσομοιώσεις ενός Video Player / περιεχομένου και να αξιολογήσετε την εμπειρία σας.</p>
 
@@ -1316,10 +1313,7 @@
             if (navigator.sendBeacon) {
                 const blob = new Blob([data], { type: 'text/plain' });
                 const ok = navigator.sendBeacon(SHEET_WEB_APP_URL, blob);
-                if (ok) {
-                    showToast('Αποθηκεύτηκε στο Google Sheet');
-                    return;
-                }
+                if (ok) return;
             }
 
             const formBody = new URLSearchParams({ payload: data });
@@ -1328,7 +1322,6 @@
                 mode: 'no-cors',
                 body: formBody
             });
-            showToast('Αποθηκεύτηκε στο Google Sheet');
         } catch (err) {
             console.error('Sheet submit failed:', err);
             showToast('Αποτυχία αποστολής');
@@ -1522,13 +1515,16 @@
     function nextScenario() {
         const payload = collectScenarioResponse();
         responses.push(payload);
-        sendResponse(payload);
 
         currentStep++;
         if (currentStep < scenarios.length) {
             loadScenarioUI();
             document.getElementById('player').scrollIntoView({behavior: "smooth"});
         } else {
+            sendResponse({
+                sessionTimestamp: new Date().toISOString(),
+                responses
+            });
             document.getElementById('experiment-screen').classList.add('hidden');
             document.getElementById('thank-you').classList.remove('hidden');
         }
