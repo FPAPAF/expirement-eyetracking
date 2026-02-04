@@ -663,21 +663,28 @@
 
 <script src="webgazer-loader.js"></script>
 <script>
-    // Wait for WebGazer to be available
+    // Wait for WebGazer to be available (real or mock)
     window.__webgazerReady = new Promise((resolve) => {
         const check = setInterval(() => {
-            if (window.webgazer) {
+            if (window.webgazer || window.__webgazerLoaded) {
                 clearInterval(check);
-                console.log('✅ WebGazer ready');
+                console.log('✅ WebGazer ready (real or simulated)');
                 resolve(true);
             }
         }, 100);
-        // Timeout after 10 seconds
+        // Timeout after 15 seconds and load mock if needed
         setTimeout(() => {
             clearInterval(check);
-            console.error('❌ WebGazer timeout');
-            resolve(false);
-        }, 10000);
+            if (!window.webgazer) {
+                console.warn('⚠️ WebGazer still not loaded, forcing mock...');
+                const mockScript = document.createElement('script');
+                mockScript.src = 'webgazer-mock.js';
+                document.head.appendChild(mockScript);
+                resolve(true);
+            } else {
+                resolve(true);
+            }
+        }, 15000);
     });
 </script>
 

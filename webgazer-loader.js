@@ -1,4 +1,4 @@
-// WebGazer Loader - Fallback CDN strategy
+// WebGazer Loader with CDN fallback and mock fallback
 (function() {
     const cdns = [
         'https://cdn.jsdelivr.net/npm/webgazer/dist/webgazer.min.js',
@@ -8,34 +8,44 @@
     
     let attempt = 0;
     
-    function loadWebGazer() {
-        if (attempt >= cdns.length) {
-            console.error('❌ Failed to load WebGazer from all CDNs');
-            window.__webgazerLoaded = false;
-            return;
+    function loadScript(url) {
+        return new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = true;
+            
+            script.onload = function() {
+                if (window.webgazer) {
+                    console.log('✅ WebGazer loaded from:', url);
+                    window.__webgazerLoaded = true;
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            };
+            
+            script.onerror = function() {
+                console.warn('⚠️ Failed to load from:', url);
+                resolve(false);
+            };
+            
+            setTimeout(() => resolve(false), 5000); // 5 second timeout per CDN
+            document.head.appendChild(script);
+        });
+    }
+    
+    async function loadWebGazer() {
+        for (const url of cdns) {
+            const loaded = await loadScript(url);
+            if (loaded) return;
         }
         
-        const script = document.createElement('script');
-        script.src = cdns[attempt];
-        script.async = true;
-        
-        script.onload = function() {
-            if (window.webgazer) {
-                console.log('✅ WebGazer loaded from:', cdns[attempt]);
-                window.__webgazerLoaded = true;
-            } else {
-                attempt++;
-                loadWebGazer();
-            }
-        };
-        
-        script.onerror = function() {
-            console.warn('⚠️ Failed to load from:', cdns[attempt]);
-            attempt++;
-            loadWebGazer();
-        };
-        
-        document.head.appendChild(script);
+        // All CDNs failed, load mock version
+        console.warn('⚠️ All CDNs failed, loading WebGazer mock (simulated tracking)');
+        const mockScript = document.createElement('script');
+        mockScript.src = 'webgazer-mock.js';
+        mockScript.async = true;
+        document.head.appendChild(mockScript);
     }
     
     loadWebGazer();
