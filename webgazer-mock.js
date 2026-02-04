@@ -53,57 +53,7 @@ window.webgazer = (function() {
         showVideoPreview: function(show) {
             showVideo = show;
             console.log('📹 Video preview:', show ? 'ON' : 'OFF');
-            // Create fake webcam preview
-            if (show) {
-                const container = document.getElementById('webgazerVideoContainer') || 
-                                 document.createElement('div');
-                container.id = 'webgazerVideoContainer';
-                container.style.cssText = `
-                    position: fixed;
-                    bottom: 16px;
-                    left: 16px;
-                    width: 180px;
-                    height: 135px;
-                    background: #000;
-                    border: 2px solid #00ff00;
-                    border-radius: 8px;
-                    z-index: 100002;
-                    overflow: hidden;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 255, 0, 0.3);
-                `;
-                container.tabIndex = -1;
-                
-                // Create fake video feed
-                const canvas = document.createElement('canvas');
-                canvas.width = 180;
-                canvas.height = 135;
-                canvas.id = 'webgazerVideoFeed';
-                
-                const ctx = canvas.getContext('2d');
-                function animateCanvas() {
-                    // Draw gradient animation
-                    const gradient = ctx.createLinearGradient(0, 0, 180, 135);
-                    gradient.addColorStop(0, `hsl(${Math.random() * 360}, 70%, 50%)`);
-                    gradient.addColorStop(1, `hsl(${Math.random() * 360}, 70%, 50%)`);
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, 0, 180, 135);
-                    
-                    // Add text
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 12px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('WebGazer', 90, 60);
-                    ctx.fillText('(Simulated)', 90, 80);
-                    
-                    requestAnimationFrame(animateCanvas);
-                }
-                animateCanvas();
-                
-                container.appendChild(canvas);
-                if (!document.getElementById('webgazerVideoContainer')) {
-                    document.body.appendChild(container);
-                }
-            }
+            // WebGazer will create its own video container - don't create mock
             return this;
         },
         
