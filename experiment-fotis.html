@@ -1120,7 +1120,10 @@
                 <input type="text" id="q5-text" placeholder="Γράψτε την απάντηση σας" style="width:98%; padding:5px; margin-top:5px; display:none;">
             </div>
         </form>
-        <button class="btn" onclick="nextScenario()">Επόμενο Σενάριο</button>
+        <div id="validation-error" style="color: #e74c3c; font-weight: bold; margin-bottom: 10px; display: none;">
+            ⚠️ Παρακαλώ απαντήστε όλες τις ερωτήσεις πριν συνεχίσετε.
+        </div>
+        <button class="btn" onclick="validateAndProceed()">Επόμενο Σενάριο</button>
     </div>
 </div>
 
@@ -1939,6 +1942,32 @@
             document.getElementById('questions-area').classList.remove('hidden');
             document.getElementById('questions-area').scrollIntoView({behavior: "smooth"});
         }, 1500);
+    }
+
+    function validateAllAnswered() {
+        const q1 = document.querySelector('input[name="q1"]:checked')?.value || "";
+        const q2 = document.querySelector('input[name="q2"]:checked')?.value || "";
+        const q3 = document.getElementById('q3').value || "";
+        const q4 = document.getElementById('q4').value.trim();
+        const q5 = getQ5Value();
+
+        const allAnswered = q1 && q2 && q3 && q4 && q5;
+        
+        const errorDiv = document.getElementById('validation-error');
+        if (!allAnswered) {
+            errorDiv.style.display = 'block';
+            errorDiv.scrollIntoView({behavior: "smooth"});
+            return false;
+        } else {
+            errorDiv.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validateAndProceed() {
+        if (validateAllAnswered()) {
+            nextScenario();
+        }
     }
 
     function nextScenario() {
