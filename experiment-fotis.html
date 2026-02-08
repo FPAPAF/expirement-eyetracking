@@ -1196,42 +1196,36 @@
                 <label for="rank-1">1η πιο ενοχλητική</label>
                 <select id="rank-1">
                     <option value="" disabled selected>Επιλέξτε...</option>
-                    <option value="nike_recipe">Nike (Recipe Part 1)</option>
-                    <option value="vitam_recipe">Βιτάμ (Recipe Part 2)</option>
-                    <option value="food_recipe">Food Ad (Recipe Part 3)</option>
-                    <option value="milko_nba">Milko (NBA)</option>
-                    <option value="nike_fitness">Nike (Fitness Part 1)</option>
-                    <option value="ikea_fitness">IKEA (Fitness Part 2)</option>
-                    <option value="travel_places">Travel Ad (Places Part 1)</option>
-                    <option value="food_places">Food Ad (Places Part 2)</option>
+                    <option value="vitam">ΒΙΤΑΜ</option>
+                    <option value="ion">ΣΟΚΟΦΡΕΤΑ ION</option>
+                    <option value="ikea">ΙΚΕΑ</option>
+                    <option value="milko">ΜΙΛΚΟ</option>
+                    <option value="aegean">AEGEAN</option>
+                    <option value="nike">NIKE</option>
                 </select>
             </div>
             <div>
                 <label for="rank-2">2η πιο ενοχλητική</label>
                 <select id="rank-2">
                     <option value="" disabled selected>Επιλέξτε...</option>
-                    <option value="nike_recipe">Nike (Recipe Part 1)</option>
-                    <option value="vitam_recipe">Βιτάμ (Recipe Part 2)</option>
-                    <option value="food_recipe">Food Ad (Recipe Part 3)</option>
-                    <option value="milko_nba">Milko (NBA)</option>
-                    <option value="nike_fitness">Nike (Fitness Part 1)</option>
-                    <option value="ikea_fitness">IKEA (Fitness Part 2)</option>
-                    <option value="travel_places">Travel Ad (Places Part 1)</option>
-                    <option value="food_places">Food Ad (Places Part 2)</option>
+                    <option value="vitam">ΒΙΤΑΜ</option>
+                    <option value="ion">ΣΟΚΟΦΡΕΤΑ ION</option>
+                    <option value="ikea">ΙΚΕΑ</option>
+                    <option value="milko">ΜΙΛΚΟ</option>
+                    <option value="aegean">AEGEAN</option>
+                    <option value="nike">NIKE</option>
                 </select>
             </div>
             <div>
                 <label for="rank-3">3η πιο ενοχλητική</label>
                 <select id="rank-3">
                     <option value="" disabled selected>Επιλέξτε...</option>
-                    <option value="nike_recipe">Nike (Recipe Part 1)</option>
-                    <option value="vitam_recipe">Βιτάμ (Recipe Part 2)</option>
-                    <option value="food_recipe">Food Ad (Recipe Part 3)</option>
-                    <option value="milko_nba">Milko (NBA)</option>
-                    <option value="nike_fitness">Nike (Fitness Part 1)</option>
-                    <option value="ikea_fitness">IKEA (Fitness Part 2)</option>
-                    <option value="travel_places">Travel Ad (Places Part 1)</option>
-                    <option value="food_places">Food Ad (Places Part 2)</option>
+                    <option value="vitam">ΒΙΤΑΜ</option>
+                    <option value="ion">ΣΟΚΟΦΡΕΤΑ ION</option>
+                    <option value="ikea">ΙΚΕΑ</option>
+                    <option value="milko">ΜΙΛΚΟ</option>
+                    <option value="aegean">AEGEAN</option>
+                    <option value="nike">NIKE</option>
                 </select>
             </div>
         </div>
@@ -1418,7 +1412,7 @@
 
 <script>
     // === Google Sheets Web App URL (αντικατάστησε μετά το Publish) ===
-    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyCZ8pOAd0JlOii8y17gveZLWZeLaIcE3cfi7B9P80PHhK9wiPa8U1z9w-syhXj0VKB0Q/exec";
+    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxH3p9iiMqpoY_HqKUwXdV0pchJYiBYTPtib1Ub9A7Bxjsm0KgFko32foHr-K-OLgJEow/exec";
 
     const scenarios = [
         // ═══════════════════════════════════════════════════════════════
@@ -1431,7 +1425,7 @@
             block: 1,
             type: 'preroll_skippable',
             title: "Block 1 - Recipe Part 1 (Pre-roll Skippable)",
-            desc: "[BLOCK 1] Pre-roll διαφήμιση πριν το Recipe Part 1 με δυνατότητα παράλειψης.",
+            desc: "",
             videoSrc: "videos/recipe-part1.mp4",
             adContent: { brand: "Nike", tagline: "Just Do It.", bg: "#111111" },
             adVideoSrc: "ads/nike_ad.mp4",
@@ -1447,7 +1441,7 @@
             block: 1,
             type: 'preroll_nonskippable',
             title: "Block 1 - Recipe Part 2 (Pre-roll Non-skippable)",
-            desc: "[BLOCK 1] Pre-roll διαφήμιση πριν το Recipe Part 2 χωρίς δυνατότητα παράλειψης.",
+            desc: "",
             videoSrc: "videos/recipe-part2.mp4",
             adContent: { brand: "Βιτάμ", tagline: "Γεύση που ξεχωρίζει.", bg: "#e67e22" },
             adVideoSrc: "ads/bitam_ad.mp4",
@@ -1462,7 +1456,7 @@
             block: 1,
             type: 'midroll_skippable',
             title: "Block 1 - Recipe Part 3 (Mid-roll Skippable)",
-            desc: "[BLOCK 1] Mid-roll διαφήμιση στο Recipe Part 3 με δυνατότητα παράλειψης.",
+            desc: "",
             videoSrc: "videos/recipe-part3.mp4",
             adContent: { brand: "Food Ad", tagline: "Γεύση που κερδίζει.", bg: "#c0392b" },
             adVideoSrc: "ads/food_ad.mp4",
@@ -1479,7 +1473,7 @@
             block: 1,
             type: 'midroll_nonskippable',
             title: "Block 1 - NBA (Mid-roll Non-skippable)",
-            desc: "[BLOCK 1] Mid-roll διαφήμιση σε NBA βίντεο χωρίς δυνατότητα παράλειψης.",
+            desc: "",
             videoSrc: "videos/nba.mp4",
             adContent: { brand: "Milko", tagline: "Η ενέργεια της ημέρας.", bg: "#2c3e50" },
             adVideoSrc: "ads/milko_ad.mp4",
@@ -1499,7 +1493,7 @@
             block: 2,
             type: 'preroll_skippable',
             title: "Block 2 - Fitness Part 1 (Relevant)",
-            desc: "[BLOCK 2] Pre-roll διαφήμιση σχετική με Fitness Part 1.",
+            desc: "",
             videoSrc: "videos/fitness-part1.mp4",
             adContent: { brand: "Nike", tagline: "Just Do It.", bg: "#111111" },
             adVideoSrc: "ads/nike_ad.mp4",
@@ -1516,7 +1510,7 @@
             block: 2,
             type: 'preroll_skippable',
             title: "Block 2 - Fitness Part 2 (Irrelevant)",
-            desc: "[BLOCK 2] Pre-roll διαφήμιση άσχετη με Fitness Part 2.",
+            desc: "",
             videoSrc: "videos/fitness-part2.mp4",
             adContent: { brand: "IKEA", tagline: "Ιδέες για κάθε χώρο.", bg: "#1e88e5" },
             adVideoSrc: "ads/ikea_ad.mp4",
@@ -1533,7 +1527,7 @@
             block: 2,
             type: 'midroll_skippable',
             title: "Block 2 - Places Part 1 (Relevant Mid-roll)",
-            desc: "[BLOCK 2] Mid-roll διαφήμιση σχετική με Places Part 1.",
+            desc: "",
             videoSrc: "videos/places-part1.mp4",
             adContent: { brand: "Travel Ad", tagline: "Ταξίδεψε σήμερα.", bg: "#16a085" },
             adVideoSrc: "ads/places_ad.mp4",
@@ -1550,7 +1544,7 @@
             block: 2,
             type: 'midroll_skippable',
             title: "Block 2 - Places Part 2 (Irrelevant Mid-roll)",
-            desc: "[BLOCK 2] Mid-roll διαφήμιση άσχετη με Places Part 2.",
+            desc: "",
             videoSrc: "videos/places-part2.mp4",
             adContent: { brand: "Food Ad", tagline: "Γεύση που κερδίζει.", bg: "#c0392b" },
             adVideoSrc: "ads/food_ad.mp4",
@@ -2195,6 +2189,16 @@
         adBrand.innerText = scen.adContent.brand;
         adTag.innerText = scen.adContent.tagline;
 
+        let duration = scen.adDuration || 15;
+        let timeLeft = duration;
+        let elapsed = 0;
+        const timerDisplay = document.getElementById('ad-timer');
+        const skipBtn = document.getElementById('skip-btn');
+        const skipText = document.getElementById('skip-text');
+        const progressBar = document.getElementById('ad-progress');
+        const skipContainer = document.getElementById('skip-container');
+        const isScenario7 = scen.id === 7;
+
         // Ad video (αν υπάρχει)
         if (scen.adVideoSrc) {
             adVideo.src = scen.adVideoSrc;
@@ -2203,10 +2207,31 @@
             adVideo.muted = false;
             adVideo.volume = 1;
             adVideo.onended = () => endInstreamAd();
-            adVideo.play().catch(() => {
-                // Αν μπλοκαριστεί, παραμένει muted και εμφανίζεται το κάδρο
-                adVideo.muted = true;
-            });
+            adVideo.onloadedmetadata = () => {
+                if (isScenario7 && adVideo.duration) {
+                    const startAt = Math.max(adVideo.duration - 30, 0);
+                    adVideo.currentTime = startAt;
+                    duration = Math.ceil(adVideo.duration - startAt);
+                    timeLeft = duration;
+                    timerDisplay.innerText = `0:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+                    adVideo.play().catch(() => {});
+                    return;
+                }
+
+                if (!scen.adDuration && adVideo.duration) {
+                    duration = Math.ceil(adVideo.duration);
+                    timeLeft = duration;
+                    timerDisplay.innerText = `0:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+                }
+            };
+
+            if (!isScenario7) {
+                adVideo.play().catch(() => {
+                    // Αν μπλοκαριστεί, παραμένει muted και εμφανίζεται το κάδρο
+                    adVideo.muted = true;
+                });
+            }
+
             adVisual.style.display = 'none';
             if (adControls) adControls.style.display = 'flex';
             adVisual.style.backgroundColor = 'transparent';
@@ -2240,19 +2265,8 @@
             adBadge.innerText = "Διαφήμιση";
         }
 
-        let duration = scen.adDuration || 15;
-        let timeLeft = duration;
-        let elapsed = 0;
-
-        const timerDisplay = document.getElementById('ad-timer');
-        const skipBtn = document.getElementById('skip-btn');
-        const skipText = document.getElementById('skip-text');
-        const progressBar = document.getElementById('ad-progress');
-
         skipBtn.classList.remove('active');
         skipBtn.onclick = null;
-
-        const skipContainer = document.getElementById('skip-container');
 
         if (scen.skippable) {
             const skipDelay = scen.skipDelay || 5;
@@ -2262,16 +2276,6 @@
         } else {
             skipText.innerText = "";
             if (skipContainer) skipContainer.style.display = 'none';
-        }
-
-        if (scen.adVideoSrc) {
-            adVideo.onloadedmetadata = () => {
-                if (!scen.adDuration && adVideo.duration) {
-                    duration = Math.ceil(adVideo.duration);
-                    timeLeft = duration;
-                    timerDisplay.innerText = `0:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
-                }
-            };
         }
 
         clearInterval(timerInterval);
@@ -2335,9 +2339,7 @@
             currentAdMetrics.inAoi = false;
             currentAdMetrics.lastTs = null;
         }
-        if (completeBtn) {
-            completeBtn.disabled = false;
-        }
+        
         if (interactionError) {
             interactionError.style.display = 'none';
         }
