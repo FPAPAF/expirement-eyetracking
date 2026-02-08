@@ -1569,7 +1569,7 @@
     let activeScenarioId = null;
     const gazeSamplesByScenario = {};
     const aoiMetricsByScenario = {};
-    const MAX_GAZE_SAMPLES = 200;
+    const MAX_GAZE_SAMPLES = 1500;
     let isInteractionStep = false;
     let adShown = false;
     let adActive = false;
@@ -1896,9 +1896,16 @@
         webgazerInitialized = true;
 
         webgazer.setGazeListener((data, timestamp) => {
-            if (!data || !activeScenarioId || !isInteractionStep) return;
+            if (!data || !activeScenarioId) return;
             const samples = gazeSamplesByScenario[activeScenarioId];
             if (!samples || samples.length >= MAX_GAZE_SAMPLES) return;
+
+            const mainVideo = document.getElementById('main-video');
+            const adVideo = document.getElementById('ad-video');
+            const mainPlaying = !!mainVideo && !mainVideo.paused;
+            const adPlaying = !!adVideo && !adVideo.paused;
+            const isVideoPlaying = (adActive && adPlaying) || (!adActive && mainPlaying);
+            if (!isVideoPlaying) return;
 
             const ts = typeof timestamp === 'number' ? timestamp : performance.now();
             const gazeX = Math.round(data.x || 0);
