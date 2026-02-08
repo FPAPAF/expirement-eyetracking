@@ -1132,7 +1132,7 @@
 
     <!-- Ερωτηματολόγιο -->
     <div id="questions-area" class="hidden">
-        <p style="font-weight:700; margin-bottom:12px;">Σχετικά με τη διαφήμιση που μόλις είδατε</p>
+        <p style="font-weight:700; margin-bottom:12px;">Σχετικά με τη διαφήμιση που μόλις είδατε...</p>
         <form id="questions-form">
             <div class="question-block">
                 <label>1. Πόσο <strong>παρεμβατική</strong> (intrusive) θεωρήσατε αυτή τη διαφήμιση;</label>
@@ -1560,6 +1560,7 @@
     ];
 
     let currentStep = 0;
+    const MAX_MAIN_VIDEO_SECONDS = 60;
     let timerInterval = null;
     const responses = [];
 
@@ -1759,7 +1760,9 @@
         };
 
         const override = scenarioQuestionOverrides[scen.id];
-        q5Label.innerText = override?.label || contentQuestionMap[scen.mainContent] || "5. Τι θυμάστε ότι είδατε στο βίντεο;";
+        const baseLabel = override?.label || contentQuestionMap[scen.mainContent] || "5. Τι θυμάστε ότι είδατε στο βίντεο;";
+        const cleanedLabel = baseLabel.replace(/^5\.\s*/i, "");
+        q5Label.innerText = `5. Σχετικά με το βίντεο που μόλις είδατε... ${cleanedLabel}`;
 
         const inputType = override?.inputType || "select";
         if (inputType === "text") {
@@ -1786,6 +1789,8 @@
         // Σταμάτημα και reset βίντεο
         video.pause();
         video.currentTime = 0;
+        video.ontimeupdate = null;
+        video.onended = null;
         
         // 🔥 ΚΡΙΣΙΜΟ: Φόρτωση του σωστού video source για κάθε σενάριο
         // Αλλαγή του src απευθείας (όχι μέσω <source> tag)
@@ -1802,7 +1807,6 @@
         };
         
         video.controls = false;
-        video.onended = null;
         mainPlayBtn.style.display = 'flex';
         contentStatus.classList.add('hidden');
         adLayer.style.display = 'none';
@@ -2099,14 +2103,7 @@
     }
 
     function showToast(message) {
-        const toast = document.getElementById('toast');
-        if (!toast) return;
-        toast.textContent = message;
-        toast.classList.add('show');
-        clearTimeout(window.__toastTimer);
-        window.__toastTimer = setTimeout(() => {
-            toast.classList.remove('show');
-        }, 1800);
+        return;
     }
 
     function runScenarioLogic() {
@@ -2115,11 +2112,31 @@
         const contentStatus = document.getElementById('content-status');
         const video = document.getElementById('main-video');
         const completeBtn = document.getElementById('complete-browsing-btn');
+        let maxStopHandled = false;
 
         // Ανεξάρτητα από τύπο σεναρίου, αρχικά σταματάμε το βίντεο
         mainPlayBtn.style.display = 'none';
         video.pause();
         video.currentTime = 0;
+
+        video.ontimeupdate = () => {
+            if (maxStopHandled) return;
+            if (video.currentTime >= MAX_MAIN_VIDEO_SECONDS) {
+                maxStopHandled = true;
+                video.pause();
+                video.currentTime = MAX_MAIN_VIDEO_SECONDS;
+
+                if (scen.type.includes('postroll')) {
+                    if (completeBtn) completeBtn.disabled = false;
+                    contentStatus.classList.add('hidden');
+                    startInstreamAd(scen);
+                } else {
+                    if (completeBtn) completeBtn.disabled = false;
+                    contentStatus.classList.remove('hidden');
+                    contentStatus.innerHTML = "<span>Το βίντεο ολοκληρώθηκε.</span>";
+                }
+            }
+        };
 
         // Mid-roll: Interrupt video at specified point
         if (scen.type.includes('midroll')) {
