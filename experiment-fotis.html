@@ -1132,6 +1132,7 @@
 
     <!-- Ερωτηματολόγιο -->
     <div id="questions-area" class="hidden">
+        <p style="font-weight:700; margin-bottom:12px;">Σχετικά με τη διαφήμιση που μόλις είδατε</p>
         <form id="questions-form">
             <div class="question-block">
                 <label>1. Πόσο <strong>παρεμβατική</strong> (intrusive) θεωρήσατε αυτή τη διαφήμιση;</label>
@@ -1169,7 +1170,7 @@
                 <input type="text" id="q4" placeholder="Γράψτε το προϊόν ή τη μάρκα αν θυμάστε" style="width:98%; padding:5px;">
             </div>
             <div class="question-block">
-                <label id="q5-label">5. Ερώτηση περιεχομένου βίντεο:</label>
+                <label id="q5-label">5. Σχετικά με το βίντεο που μόλις είδατε:</label>
                 <select id="q5" style="width: 100%; padding: 8px; margin-top:5px;">
                     <option value="" disabled selected>Επιλέξτε...</option>
                 </select>
@@ -1412,7 +1413,7 @@
 
 <script>
     // === Google Sheets Web App URL (αντικατάστησε μετά το Publish) ===
-    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxH3p9iiMqpoY_HqKUwXdV0pchJYiBYTPtib1Ub9A7Bxjsm0KgFko32foHr-K-OLgJEow/exec";
+    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcVrmPJd4r4NWRh1AT3ljdHb_FTIsc938APK8zvGQB_S-4O6f71QWWp5i8KPveLUZmMg/exec";
 
     const scenarios = [
         // ═══════════════════════════════════════════════════════════════
@@ -1535,7 +1536,8 @@
             skippable: false,
             skipDelay: 5,
             interruptionPoint: 15000,
-            relevance: "high"
+            relevance: "high",
+            useLast30Seconds: false
         },
 
         // 8. Places Part 2 (Irrelevant - Mid-roll Skippable)
@@ -2197,7 +2199,7 @@
         const skipText = document.getElementById('skip-text');
         const progressBar = document.getElementById('ad-progress');
         const skipContainer = document.getElementById('skip-container');
-        const isScenario7 = scen.id === 7;
+        const useLast30Seconds = scen.useLast30Seconds === true;
 
         // Ad video (αν υπάρχει)
         if (scen.adVideoSrc) {
@@ -2208,7 +2210,7 @@
             adVideo.volume = 1;
             adVideo.onended = () => endInstreamAd();
             adVideo.onloadedmetadata = () => {
-                if (isScenario7 && adVideo.duration) {
+                if (useLast30Seconds && adVideo.duration) {
                     const startAt = Math.max(adVideo.duration - 30, 0);
                     adVideo.currentTime = startAt;
                     duration = Math.ceil(adVideo.duration - startAt);
@@ -2225,7 +2227,7 @@
                 }
             };
 
-            if (!isScenario7) {
+            if (!useLast30Seconds) {
                 adVideo.play().catch(() => {
                     // Αν μπλοκαριστεί, παραμένει muted και εμφανίζεται το κάδρο
                     adVideo.muted = true;
