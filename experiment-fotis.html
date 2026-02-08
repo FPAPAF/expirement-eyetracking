@@ -1927,7 +1927,8 @@
                 if (inAoi && !currentAdMetrics.inAoi) {
                     currentAdMetrics.visits += 1;
                     if (currentAdMetrics.ttff == null) {
-                        currentAdMetrics.ttff = Math.max(0, ts - currentAdMetrics.adStartTs);
+                        const diff = ts - currentAdMetrics.adStartTs;
+                        currentAdMetrics.ttff = Math.max(1, Math.round(diff));
                     }
                 }
 
