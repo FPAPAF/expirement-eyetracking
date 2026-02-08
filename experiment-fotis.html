@@ -2154,6 +2154,7 @@
     function startInstreamAd(scen, isSponsoredFeed = false) {
         const adLayer = document.getElementById('ad-layer');
         const adVisual = document.getElementById('ad-visual');
+        const adControls = document.querySelector('.ad-controls');
         const adBrand = document.getElementById('ad-brand-name');
         const adTag = document.getElementById('ad-tagline');
         const adBadge = document.getElementById('ad-badge');
@@ -2179,11 +2180,15 @@
             adVideo.play().catch(() => {
                 // Αν μπλοκαριστεί, παραμένει muted και εμφανίζεται το κάδρο
             });
+            adVisual.style.display = 'none';
+            if (adControls) adControls.style.display = 'none';
             adVisual.style.backgroundColor = 'transparent';
         } else {
             adVideo.pause();
             adVideo.removeAttribute('src');
             adVideo.style.display = 'none';
+            adVisual.style.display = 'block';
+            if (adControls) adControls.style.display = 'flex';
         }
 
         // AOI setup
