@@ -186,6 +186,11 @@
             letter-spacing: 0.5px;
         }
 
+        #ad-badge,
+        #ad-website {
+            display: none;
+        }
+
         .progress-bar {
             width: 0%;
             height: 6px;
@@ -1070,7 +1075,7 @@
     <p id="scenario-desc" style="font-size:14px; color:#666; margin-top:8px;"></p>
 
     <div id="interaction-step">
-        <p id="interaction-instruction" class="section-subtitle">Οδηγία: Επιλέξτε άρθρο/scroll στην προσομοίωση και παρακολουθήστε τη διαφήμιση.</p>
+        
 
         <div class="video-wrapper" id="player">
             <video id="main-video" 
@@ -1092,7 +1097,7 @@
 
             <!-- In‑stream ad layer -->
             <div class="ad-layer" id="ad-layer">
-                <video id="ad-video" class="ad-video" muted playsinline></video>
+                <video id="ad-video" class="ad-video" playsinline></video>
                 <div class="ad-video-sim" id="ad-visual">
                     <div style="text-align:center;">
                         <h2 id="ad-brand-name">BRAND NAME</h2>
@@ -1413,7 +1418,7 @@
 
 <script>
     // === Google Sheets Web App URL (αντικατάστησε μετά το Publish) ===
-    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwPNbnLPKgdsyt5FqHyfipNQR2gMQjUL1g-dhNyO81N5LlHu5L-e7HODJEf5Qu8ndBmOA/exec";
+    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyCZ8pOAd0JlOii8y17gveZLWZeLaIcE3cfi7B9P80PHhK9wiPa8U1z9w-syhXj0VKB0Q/exec";
 
     const scenarios = [
         // ═══════════════════════════════════════════════════════════════
@@ -1533,8 +1538,7 @@
             adContent: { brand: "Travel Ad", tagline: "Ταξίδεψε σήμερα.", bg: "#16a085" },
             adVideoSrc: "ads/places_ad.mp4",
             mainContent: "places",
-            skippable: true,
-            adDuration: 15,
+            skippable: false,
             skipDelay: 5,
             interruptionPoint: 15000,
             relevance: "high"
@@ -2064,24 +2068,37 @@
     }
 
     async function sendFinalPayload() {
-        const finalPayload = {
-            batchId: `final_${Date.now()}`,
-            timestamp: new Date().toISOString(),
+        const batchId = `batch_${Date.now()}`;
+        const rankingData = collectRankingResponse();
+        
+        // 1. Αποστολή των Ranking Data (Τελική Αξιολόγηση)
+        // Τα στέλνουμε "ανοιχτά" για να γεμίσουν τις στήλες στο Sheet
+        const finalRankingPayload = {
+            ...rankingData,
+            type: 'final_ranking',
+            batchId: batchId,
+            // Προσθέτουμε ξανά τα δημογραφικά για σιγουριά
             age: document.getElementById('age')?.value || "",
             gender: document.getElementById('gender')?.value || "",
             adBlocker: document.getElementById('ad-blocker')?.value || "",
             device: document.getElementById('device')?.value || "",
-            webgazerConsent: document.getElementById('webgazer-consent')?.value || "",
-            responses: JSON.stringify(responses),
-            ranking: JSON.stringify(collectRankingResponse())
+            webgazerConsent: document.getElementById('webgazer-consent')?.value || ""
         };
 
-        const ok = await sendResponse(finalPayload);
+        // Στέλνουμε το Ranking
+        const ok = await sendResponse(finalRankingPayload);
+
+        // 2. Αποστολή των Scenarios (που έχουν μαζευτεί στη λίστα responses)
+        // Αυτά στέλνονται ένα-ένα για να είναι καθαρά στο Sheet
+        for (const item of responses) {
+            await sendResponse({ ...item, batchId: batchId });
+        }
+
         const status = document.getElementById('submission-status');
         if (status) {
             status.textContent = ok
                 ? 'Η αποστολή ολοκληρώθηκε και επιβεβαιώθηκε.'
-                : 'Η αποστολή ξεκίνησε, αλλά δεν επιβεβαιώθηκε. Ελέγξτε τη σύνδεση.';
+                : 'Η αποστολή ολοκληρώθηκε (χωρίς επιβεβαίωση).';
         }
     }
 
@@ -2101,6 +2118,7 @@
         const mainPlayBtn = document.getElementById('main-play-btn');
         const contentStatus = document.getElementById('content-status');
         const video = document.getElementById('main-video');
+        const completeBtn = document.getElementById('complete-browsing-btn');
 
         // Ανεξάρτητα από τύπο σεναρίου, αρχικά σταματάμε το βίντεο
         mainPlayBtn.style.display = 'none';
@@ -2120,6 +2138,10 @@
             if (playPromise !== undefined) {
                 playPromise.catch(e => console.log('Autoplay blocked:', e));
             }
+
+            video.onended = () => {
+                if (completeBtn) completeBtn.disabled = false;
+            };
             
             // Διακοπή στο καθορισμένο σημείο
             setTimeout(() => {
@@ -2141,6 +2163,7 @@
             
             // Όταν τελειώσει το βίντεο, εμφάνισε τη διαφήμιση
             video.onended = () => {
+                if (completeBtn) completeBtn.disabled = false;
                 contentStatus.classList.add('hidden');
                 startInstreamAd(scen);
             };
@@ -2177,11 +2200,15 @@
             adVideo.src = scen.adVideoSrc;
             adVideo.style.display = 'block';
             adVideo.currentTime = 0;
+            adVideo.muted = false;
+            adVideo.volume = 1;
+            adVideo.onended = () => endInstreamAd();
             adVideo.play().catch(() => {
                 // Αν μπλοκαριστεί, παραμένει muted και εμφανίζεται το κάδρο
+                adVideo.muted = true;
             });
             adVisual.style.display = 'none';
-            if (adControls) adControls.style.display = 'none';
+            if (adControls) adControls.style.display = 'flex';
             adVisual.style.backgroundColor = 'transparent';
         } else {
             adVideo.pause();
@@ -2213,7 +2240,7 @@
             adBadge.innerText = "Διαφήμιση";
         }
 
-        const duration = scen.adDuration || 15;
+        let duration = scen.adDuration || 15;
         let timeLeft = duration;
         let elapsed = 0;
 
@@ -2225,12 +2252,26 @@
         skipBtn.classList.remove('active');
         skipBtn.onclick = null;
 
+        const skipContainer = document.getElementById('skip-container');
+
         if (scen.skippable) {
             const skipDelay = scen.skipDelay || 5;
             skipText.innerText = `Skip in ${skipDelay}`;
             skipBtn.onclick = () => endInstreamAd();
+            if (skipContainer) skipContainer.style.display = 'block';
         } else {
-            skipText.innerText = "Video will play after ad";
+            skipText.innerText = "";
+            if (skipContainer) skipContainer.style.display = 'none';
+        }
+
+        if (scen.adVideoSrc) {
+            adVideo.onloadedmetadata = () => {
+                if (!scen.adDuration && adVideo.duration) {
+                    duration = Math.ceil(adVideo.duration);
+                    timeLeft = duration;
+                    timerDisplay.innerText = `0:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+                }
+            };
         }
 
         clearInterval(timerInterval);
@@ -2284,6 +2325,9 @@
             });
             contentStatus.classList.remove('hidden');
             contentStatus.innerHTML = "<span>Το βίντεο συνεχίζεται...</span>";
+            video.onended = () => {
+                if (completeBtn) completeBtn.disabled = false;
+            };
         }
 
         adActive = false;
@@ -2382,6 +2426,17 @@
         const adVideo = document.getElementById('ad-video');
         lockVideoSeeking(mainVideo);
         lockVideoSeeking(adVideo);
+
+        if (mainVideo) {
+            mainVideo.addEventListener('click', () => {
+                if (adActive) return;
+                if (mainVideo.paused) {
+                    mainVideo.play().catch(() => {});
+                } else {
+                    mainVideo.pause();
+                }
+            });
+        }
     }
 
     function isRankingComplete() {
