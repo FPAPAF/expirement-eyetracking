@@ -1,12 +1,2613 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=/experiment-fotis.html" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Redirecting…</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Πείραμα Video Advertising - Πανεπιστήμιο Πατρών</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%230d47a1'/%3E%3Ccircle cx='50' cy='50' r='28' fill='%234fc3f7'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23ffffff'/%3E%3C/svg%3E">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #eaf2ff 0%, #f6fbff 55%, #f0f4ff 100%);
+            padding: 24px;
+            color: #1f2d3d;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 34px;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(21, 101, 192, 0.12), 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid rgba(21, 101, 192, 0.08);
+        }
+
+        h1, h2 { text-align: center; color: #0d47a1; }
+        h1 { letter-spacing: 0.3px; }
+
+        .video-wrapper {
+            max-width: 640px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 16px 40px rgba(13, 71, 161, 0.25);
+            position: relative;
+            aspect-ratio: 16 / 9;
+        }
+
+        .video-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            flex-direction: column;
+        }
+
+        #main-video {
+            position: relative;
+            z-index: 1;
+        }
+
+        .play-button-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            width: auto;
+            height: auto;
+            background: rgba(0,0,0,0.0);
+            border-radius: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .play-triangle {
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 16px solid white;
+        }
+
+        /* In‑stream ad layer */
+        .ad-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(1px);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px 70px;
+            overflow: hidden;
+        }
+
+        .ad-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            display: none;
+        }
+
+        .ad-video-sim {
+            text-align: center;
+            color: white;
+            font-size: 34px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            padding: 50px 60px;
+            margin: 0 auto;
+            border-radius: 12px;
+            outline: 3px solid rgba(255,255,255,0.4);
+            box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 10px 35px rgba(0,0,0,0.6);
+            width: min(90%, 560px);
+            animation: adPulse 1.6s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .ad-video-sim h2 {
+            color: white;
+            margin: 18px 0 10px;
+            font-size: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+        }
+
+        .ad-video-sim p {
+            color: #f1f1f1;
+            margin: 10px 0;
+            font-size: 18px;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+        }
+
+        .ad-controls {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 46px;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 18px;
+            color: #fff;
+            font-size: 15px;
+            border-top: 2px solid rgba(255,255,255,0.2);
+            z-index: 2;
+        }
+
+        .skip-btn {
+            background: #1c1c1c;
+            border: 2px solid #fff;
+            color: #fff;
+            padding: 8px 16px;
+            font-weight: 800;
+            cursor: pointer;
+            pointer-events: none;
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+        }
+
+        .skip-btn.active {
+            pointer-events: auto;
+            opacity: 1;
+            background: #e74c3c;
+            border-color: #fff;
+            box-shadow: 0 0 0 3px rgba(231,76,60,0.3);
+        }
+
+        .ad-badge {
+            background: #f1c40f;
+            color: #000;
+            padding: 4px 8px;
+            font-weight: 800;
+            font-size: 13px;
+            border-radius: 3px;
+            margin-right: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #ad-badge,
+        #ad-website {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 6px;
+            background: #ff3b30;
+            position: absolute;
+            bottom: 46px;
+            left: 0;
+            transition: width 1s linear;
+            box-shadow: 0 0 8px rgba(255,59,48,0.7);
+            z-index: 2;
+        }
+
+        .question-block {
+            margin-bottom: 18px;
+            border-bottom: 1px dashed rgba(13, 71, 161, 0.15);
+            padding-bottom: 14px;
+        }
+
+        .likert-scale { display: flex; justify-content: space-between; margin-top: 10px; }
+
+        .likert-option { text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center;}
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(13, 71, 161, 0.2);
+            border-radius: 8px;
+            background: #f8fbff;
+            color: #1f2d3d;
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #1e88e5;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.2);
+            background: #ffffff;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #1565c0 0%, #1e88e5 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+            box-shadow: 0 8px 18px rgba(21, 101, 192, 0.25);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(21, 101, 192, 0.3); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .hidden { display: none; }
+
+        .sim-text {
+            background: rgba(13, 71, 161, 0.75);
+            padding: 10px 14px;
+            border-radius: 6px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .timer-text { font-family: monospace; }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: #0d47a1;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.25s ease;
+            z-index: 99999;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .intro-hero {
+            background: linear-gradient(135deg, rgba(13, 71, 161, 0.08), rgba(79, 195, 247, 0.1));
+            border: 1px solid rgba(13, 71, 161, 0.12);
+            padding: 18px 20px;
+            border-radius: 14px;
+            margin: 18px 0 20px;
+            text-align: center;
+        }
+
+        .intro-hero h3 {
+            margin: 0 0 6px;
+            color: #0d47a1;
+            font-size: 18px;
+        }
+
+        .notice-card {
+            display: grid;
+            gap: 10px;
+            background: #f0f6ff;
+            border-left: 5px solid #1e88e5;
+            padding: 12px 14px;
+            border-radius: 10px;
+            box-shadow: 0 8px 18px rgba(13, 71, 161, 0.12);
+            margin: 14px 0 18px;
+            color: #31415c;
+            font-size: 14px;
+        }
+
+        .notice-card.gdpr {
+            background: #f4fbf6;
+            border-left-color: #2e7d32;
+            box-shadow: 0 8px 18px rgba(46, 125, 50, 0.12);
+        }
+
+        .notice-card.gdpr .notice-pill {
+            background: #2e7d32;
+        }
+
+        .intro-text {
+            text-align: justify;
+        }
+
+        .section-title {
+            margin: 18px 0 8px;
+            color: #0d47a1;
+            font-size: 18px;
+        }
+
+        .section-subtitle {
+            color: #5a6b85;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .ranking-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .ranking-grid label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .notice-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0d47a1;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            width: fit-content;
+        }
+
+        .webgazer-status {
+            position: fixed;
+            top: 12px;
+            right: 24px;
+            left: auto;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            z-index: 100001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* === WEBGAZER CSS (Διορθωμένο βάσει του προτύπου) === */
+        
+        /* 1. Το Κουτί-Περιέκτης */
+        #webgazerVideoContainer {
+            display: block !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 320px !important;
+            height: 240px !important;
+            z-index: 99999 !important;
+            margin: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        /* 2. Στοίχιση ΟΛΩΝ των στοιχείων του WebGazer */
+        #webgazerVideoFeed,
+        #webgazerVideoCanvas,
+        #webgazerFaceOverlay,
+        #webgazerFaceFeedbackBox {
+            display: block !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            object-fit: cover !important;
+            filter: brightness(1.5) contrast(1.2) !important;
+        }
+
+        /* 3. Το πράσινο κουτί προσώπου (Face Feedback Box) */
+        #webgazerFaceFeedbackBox {
+            z-index: 100002 !important;
+            border: 2px solid #32CD32 !important;
+            background: transparent !important;
+        }
+
+        /* 4. Οι τελείες του προσώπου (Face Overlay) */
+        #webgazerFaceOverlay {
+            z-index: 100003 !important;
+        }
+
+        /* 5. Η μπλε κουκκίδα που κοιτάμε */
+        #webgazerGazeDot {
+            z-index: 100005 !important;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #27ae60;
+            animation: pulse-dot 2s infinite;
+        }
+
+        .status-dot.inactive {
+            background: #e74c3c;
+            animation: none;
+        }
+
+        .gaze-counter {
+            background: rgba(30, 136, 229, 0.85);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .calibration-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 18, 45, 0.86);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            padding: 24px;
+        }
+
+        .calibration-card {
+            width: min(720px, 92vw);
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+            border: 1px solid rgba(13, 71, 161, 0.1);
+        }
+
+        .calibration-title {
+            margin: 0 0 6px;
+            text-align: center;
+            color: #0d47a1;
+            font-size: 20px;
+        }
+
+        .calibration-subtitle {
+            margin: 0 0 16px;
+            text-align: center;
+            color: #5a6b85;
+            font-size: 14px;
+        }
+
+        .calibration-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            padding: 12px;
+        }
+
+        .calib-dot {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 4px solid #1e88e5;
+            background: #eaf2ff;
+            color: #0d47a1;
+            font-weight: 800;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 auto;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+
+        .calib-dot:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 18px rgba(13, 71, 161, 0.2);
+        }
+
+        .calib-dot.done {
+            background: #27ae60;
+            border-color: #1b8f4a;
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(39, 174, 96, 0.3);
+        }
+
+        .calibration-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 12px;
+            color: #5a6b85;
+            font-size: 13px;
+        }
+
+        .calibration-instructions {
+            background: #f0f4ff;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            border-left: 4px solid #1e88e5;
+            font-size: 13px;
+            color: #42506a;
+        }
+
+        @keyframes adPulse {
+            0% { box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 10px 35px rgba(0,0,0,0.6); }
+            50% { box-shadow: 0 0 0 10px rgba(255,255,255,0.18), 0 14px 40px rgba(0,0,0,0.7); }
+            100% { box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 10px 35px rgba(0,0,0,0.6); }
+        }
+
+        /* === RESPONSIVE MOBILE STYLES === */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 20px 16px;
+                border-radius: 12px;
+            }
+
+            h1 {
+                font-size: 22px;
+                line-height: 1.3;
+            }
+
+            h2 {
+                font-size: 18px;
+                line-height: 1.3;
+            }
+
+            h3 {
+                font-size: 16px;
+            }
+
+            p, label {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+
+            /* Likert scale - πιο compact για κινητά */
+            .likert-scale {
+                gap: 8px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .likert-option {
+                min-width: 50px;
+                font-size: 13px;
+            }
+
+            .likert-option small {
+                font-size: 10px;
+            }
+
+            .likert-option input[type="radio"] {
+                transform: scale(1.2);
+            }
+
+            /* Buttons */
+            .btn {
+                font-size: 16px;
+                padding: 14px 12px;
+            }
+
+            /* Inputs and selects */
+            input[type="text"],
+            input[type="number"],
+            select {
+                font-size: 16px; /* Αποφυγή auto-zoom στο iOS */
+                padding: 12px 10px;
+            }
+
+            /* Question blocks */
+            .question-block {
+                margin-bottom: 20px;
+                padding-bottom: 16px;
+            }
+
+            /* Video wrapper */
+            .video-wrapper {
+                margin: 16px auto;
+            }
+
+            /* Notice card */
+            .notice-card {
+                font-size: 13px;
+                padding: 10px 12px;
+            }
+
+            .notice-pill {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+
+            /* WebGazer status - μικρότερο για κινητά */
+            .webgazer-status {
+                top: 8px;
+                right: 8px;
+                padding: 6px 10px;
+                font-size: 11px;
+                gap: 6px;
+            }
+
+            .gaze-counter {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+
+            /* Calibration για κινητά */
+            .calibration-card {
+                padding: 16px;
+            }
+
+            .calibration-grid {
+                gap: 12px;
+            }
+
+            .calib-dot {
+                width: 54px;
+                height: 54px;
+                font-size: 16px;
+            }
+
+            .calibration-instructions {
+                font-size: 12px;
+                padding: 10px 12px;
+            }
+
+            /* Ad controls */
+            .ad-controls {
+                font-size: 13px;
+                padding: 0 12px;
+            }
+
+            .skip-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .ad-badge {
+                font-size: 11px;
+                padding: 3px 6px;
+            }
+
+            /* Ad video sim */
+            .ad-video-sim {
+                padding: 30px 20px;
+                width: 95%;
+            }
+
+            .ad-video-sim h2 {
+                font-size: 28px;
+            }
+
+            .ad-video-sim p {
+                font-size: 14px;
+            }
+
+            /* Scenario counter */
+            #scenario-counter {
+                font-size: 14px;
+            }
+
+            #scenario-desc {
+                font-size: 13px;
+            }
+        }
+
+        /* Extra small devices (κινητά portrait < 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            h2 {
+                font-size: 16px;
+            }
+
+            .likert-scale {
+                gap: 6px;
+            }
+
+            .likert-option {
+                min-width: 45px;
+                font-size: 12px;
+            }
+
+            .btn {
+                font-size: 15px;
+                padding: 12px 10px;
+            }
+
+            .calibration-grid {
+                gap: 10px;
+            }
+
+            .calib-dot {
+                width: 48px;
+                height: 48px;
+                font-size: 14px;
+            }
+
+            .ad-video-sim h2 {
+                font-size: 24px;
+            }
+
+            .ad-video-sim p {
+                font-size: 13px;
+            }
+
+            #webgazerVideoContainer {
+                width: 240px !important;
+                height: 180px !important;
+            }
+        }
+
+        /* === ADDITIONAL MOBILE FIXES === */
+        @media (max-width: 768px) {
+            /* Flexbox για scenario header */
+            #experiment-screen > div:first-child {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start !important;
+            }
+
+            #experiment-screen > div:first-child span {
+                font-size: 11px !important;
+            }
+
+            /* Ad controls με wrap για πολύ μικρές οθόνες */
+            .ad-controls {
+                flex-wrap: wrap;
+                gap: 8px;
+                height: auto;
+                min-height: 46px;
+                padding: 8px 12px;
+            }
+
+            .ad-controls > div {
+                flex-wrap: wrap;
+            }
+
+            /* Skip button πιο εμφανές */
+            #skip-container {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                margin-top: 4px;
+            }
+
+            .skip-btn {
+                width: auto;
+                min-width: 120px;
+            }
+
+            /* Toast notifications */
+            .toast {
+                right: 10px;
+                bottom: 10px;
+                left: 10px;
+                text-align: center;
+                font-size: 13px;
+            }
+
+            /* Intro hero */
+            .intro-hero h3 {
+                font-size: 16px;
+            }
+
+            /* Thank you screen */
+            #thank-you h1 {
+                font-size: 24px;
+            }
+
+            #thank-you h3 {
+                font-size: 16px;
+            }
+
+            /* Calibration overlay */
+            .calibration-overlay {
+                padding: 12px;
+            }
+
+            .calibration-title {
+                font-size: 18px;
+            }
+
+            .calibration-subtitle {
+                font-size: 13px;
+            }
+
+            .calibration-footer {
+                font-size: 12px;
+            }
+
+            /* Video wrapper - ensure aspect ratio */
+            .video-wrapper {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            /* Play button overlay - touch target */
+            .play-button-overlay {
+                cursor: pointer;
+                -webkit-tap-highlight-color: rgba(0,0,0,0.2);
+            }
+
+            .play-triangle {
+                width: 0;
+                height: 0;
+                border-top: 15px solid transparent;
+                border-bottom: 15px solid transparent;
+                border-left: 24px solid white;
+            }
+
+            /* Content status - μικρότερο */
+            .sim-text {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+
+            /* Spinner */
+            .spinner {
+                width: 24px;
+                height: 24px;
+            }
+
+            /* Progress bar */
+            .progress-bar {
+                height: 5px;
+            }
+
+            /* Overflow fix για πολύ μακριά κείμενα */
+            #scenario-instruction,
+            #scenario-desc {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            /* Question labels */
+            .question-block label {
+                display: block;
+                margin-bottom: 8px;
+                line-height: 1.4;
+            }
+
+            /* Select boxes - πιο μεγάλα για touch */
+            select {
+                min-height: 44px;
+                background-position: right 10px center;
+                background-size: 12px;
+            }
+
+            /* Input text fields */
+            input[type="text"],
+            input[type="number"] {
+                min-height: 44px;
+            }
+
+            /* Radio buttons - μεγαλύτερα touch targets */
+            .likert-option input[type="radio"] {
+                width: 20px;
+                height: 20px;
+                margin: 6px auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Ad timer και website info σε στήλες */
+            .ad-controls > div:first-child {
+                flex-direction: column;
+                gap: 4px;
+                align-items: flex-start;
+            }
+
+            #ad-website {
+                font-size: 10px !important;
+            }
+
+            /* Calibration grid - 2 columns για πολύ μικρές οθόνες */
+            .calibration-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Ensure nth dot is centered */
+            .calib-dot:last-child {
+                grid-column: 1 / -1;
+            }
+
+            /* Likert - stack vertically αν δεν χωράει */
+            .likert-scale {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            /* Notice card */
+            .notice-card > div {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+
+            /* Ad controls - fit to video on small devices */
+            .ad-layer {
+                padding: 18px 12px 58px;
+            }
+
+            .ad-controls {
+                flex-wrap: nowrap;
+                gap: 6px;
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .ad-controls > div:first-child {
+                max-width: 60%;
+            }
+
+            #ad-timer {
+                min-width: 36px;
+                text-align: center;
+            }
+
+            #skip-container {
+                width: auto;
+                margin-top: 0;
+            }
+
+            .skip-btn {
+                min-width: unset;
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+        }
+
+        /* Landscape orientation fixes */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .calibration-card {
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .calibration-grid {
+                gap: 8px;
+            }
+
+            .calib-dot {
+                width: 40px;
+                height: 40px;
+                font-size: 12px;
+            }
+
+            #webgazerVideoContainer {
+                width: 180px !important;
+                height: 135px !important;
+                margin: 8px;
+            }
+        }
+
+    </style>
 </head>
 <body>
-  <p>Redirecting… If not, <a href="/experiment-fotis.html">click here</a>.</p>
+
+<div class="webgazer-status hidden" id="webgazer-status">
+    <span class="status-dot inactive" id="status-dot"></span>
+    <span id="status-text">Eye Tracking: Ανενεργό</span>
+    <span class="gaze-counter" id="gaze-counter">0 points</span>
+</div>
+
+<div class="container" id="intro">
+    <h1>Μελέτη Αποτελεσματικότητας Βίντεο-Διαφήμισης</h1>
+    <h2>Προσέγγιση Neuromarketing & Συμπεριφοράς Χρήστη</h2>
+    <p style="text-align:center; color:#666;">Πανεπιστήμιο Πατρών - Τμήμα Μηχανικών Η/Υ & Πληροφορικής</p>
+    <p style="text-align:center; color:#666;">ΠΑΠΑΦΩΤΙΟΥ ΦΩΤΙΟΣ</p>
+    <hr>
+   
+    <div class="notice-card">
+        <span class="notice-pill">ΣΗΜΑΝΤΙΚΟ</span>
+        <div>Αν έχετε ενεργό ad blocker, το πείραμα ενδέχεται να μη λειτουργήσει σωστά. Παρακαλούμε απενεργοποιήστε τον προσωρινά.</div>
+        <div>Η καλύτερη εμπειρία/ακρίβεια επιτυγχάνεται σε υπολογιστή (Desktop/Laptop).</div>
+    </div>
+    <div class="notice-card gdpr">
+        <span class="notice-pill">GDPR</span>
+        <div>Τα δεδομένα της κάμερας χρησιμοποιούνται αποκλειστικά για τον υπολογισμό του βλέμματος σε πραγματικό χρόνο.</div>
+        <div>Δεν αποθηκεύεται βίντεο ή εικόνα του προσώπου σας.</div>
+        <div>Για χρήση του WebGazer απαιτείται διαθέσιμη κάμερα στη συσκευή σας.</div>
+    </div>
+    <p class="intro-text">Η παρούσα έρευνα διερευνά πώς αντιλαμβάνονται οι χρήστες διαφορετικούς τύπους In-stream διαφημίσεων (ενσωματωμένων στο βίντεο), καθώς και άλλες μορφές ψηφιακής διαφήμισης.</p>
+    <p class="intro-text">Η έρευνα πραγματοποιείται στο πλαίσιο διπλωματικής εργασίας. Τα δεδομένα που θα συλλεχθούν είναι απολύτως ανώνυμα και θα χρησιμοποιηθούν αποκλειστικά για ακαδημαϊκούς σκοπούς.</p>
+    <p class="intro-text">Θα σας ζητηθεί να παρακολουθήσετε προσομοιώσεις ενός Video Player / περιεχομένου και να αξιολογήσετε την εμπειρία σας.</p>
+
+    <div class="question-block">
+        <label><strong>Ηλικία:</strong></label>
+        <input type="number" id="age" min="16" max="100" style="padding: 5px;">
+    </div>
+
+    <div class="question-block">
+        <label><strong>Φύλο:</strong></label>
+        <select id="gender" style="width: 100%; padding: 8px; margin-top:5px;">
+            <option value="" disabled selected>Επιλέξτε...</option>
+            <option value="Άνδρας">Άνδρας</option>
+            <option value="Γυναίκα">Γυναίκα</option>
+            <option value="Άλλο">Άλλο</option>
+            <option value="Δεν επιθυμώ να απαντήσω">Δεν επιθυμώ να απαντήσω</option>
+        </select>
+    </div>
+
+    <div class="question-block">
+        <label><strong>Χρησιμοποιείτε ad blocker;</strong></label>
+        <select id="ad-blocker" style="width: 100%; padding: 8px; margin-top:5px;">
+            <option value="" disabled selected>Επιλέξτε...</option>
+            <option value="Ναι">Ναι</option>
+            <option value="Όχι">Όχι</option>
+            <option value="Δεν γνωρίζω">Δεν γνωρίζω</option>
+        </select>
+    </div>
+
+    <div class="question-block">
+        <label><strong>Από ποια συσκευή θα κάνετε το πείραμα;</strong></label>
+        <select id="device" style="width: 100%; padding: 8px; margin-top:5px;">
+            <option value="" disabled selected>Επιλέξτε...</option>
+            <option value="Desktop/Laptop">Desktop/Laptop</option>
+            <option value="Tablet">Tablet</option>
+            <option value="Κινητό">Κινητό</option>
+        </select>
+    </div>
+
+    <div class="question-block">
+        <label><strong>Θέλετε να ενεργοποιήσετε το WebGazer (χρήση κάμερας) για eye‑tracking;</strong></label>
+        <select id="webgazer-consent" style="width: 100%; padding: 8px; margin-top:5px;">
+            <option value="" disabled selected>Επιλέξτε...</option>
+            <option value="Ναι">Ναι</option>
+            <option value="Όχι">Όχι</option>
+        </select>
+    </div>
+
+    <button class="btn" onclick="startExperiment()">Έναρξη Προσομοίωσης</button>
+</div>
+
+<div class="container hidden" id="experiment-screen">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 id="scenario-counter">Σενάριο 1</h3>
+        <span style="font-size:12px; color:#999;">University of Patras Experiment</span>
+    </div>
+
+    <h2 id="scenario-instruction">Οδηγία: Πατήστε Play για να δείτε το βίντεο</h2>
+    <p id="scenario-desc" style="font-size:14px; color:#666; margin-top:8px;"></p>
+
+    <div id="interaction-step">
+        
+
+        <div class="video-wrapper" id="player">
+            <video id="main-video" 
+                   style="width:100%; height:100%; object-fit:cover; background:#000;" 
+                   controlsList="nodownload"
+                   preload="metadata"
+                   muted
+                   playsinline>
+                Το βίντεο δεν υποστηρίζεται στον περιηγητή σας.
+            </video>
+            
+            <div class="play-button-overlay" id="main-play-btn" onclick="runScenarioLogic()" style="display:none;">
+                <div class="play-triangle"></div>
+            </div>
+            <div id="content-status" class="sim-text hidden">
+                <div class="spinner"></div>
+                <span>Αναπαραγωγή Περιεχομένου...</span>
+            </div>
+
+            <!-- In‑stream ad layer -->
+            <div class="ad-layer" id="ad-layer">
+                <video id="ad-video" class="ad-video" playsinline></video>
+                <div class="ad-video-sim" id="ad-visual">
+                    <div style="text-align:center;">
+                        <h2 id="ad-brand-name">BRAND NAME</h2>
+                        <p id="ad-tagline">Buy our product now!</p>
+                    </div>
+                </div>
+
+                <div class="progress-bar" id="ad-progress"></div>
+
+                <div class="ad-controls">
+                    <div style="display:flex; align-items:center;">
+                        <span class="ad-badge" id="ad-badge">Διαφήμιση</span>
+                        <span id="ad-timer" class="timer-text">0:15</span>
+                        <span style="margin-left:10px; font-size:11px; color:#ccc;">
+                            <span id="ad-website">www.advertiser.com</span>
+                        </span>
+                    </div>
+                    <div id="skip-container">
+                        <button class="skip-btn" id="skip-btn">
+                            <span id="skip-text">Skip in 5s</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="interaction-error" style="color: #e74c3c; font-weight: bold; margin-top: 10px; display: none;">
+            ⚠️ Παρακαλώ δείτε πρώτα τη διαφήμιση πριν ολοκληρώσετε την περιήγηση.
+        </div>
+        <button class="btn" id="complete-browsing-btn" disabled>Ολοκλήρωση Περιήγησης</button>
+    </div>
+
+    <!-- Ερωτηματολόγιο -->
+    <div id="questions-area" class="hidden">
+        <p style="font-weight:700; margin-bottom:12px;">Σχετικά με τη διαφήμιση που μόλις είδατε...</p>
+        <form id="questions-form">
+            <div class="question-block">
+                <label>1. Πόσο <strong>παρεμβατική</strong> (intrusive) θεωρήσατε αυτή τη διαφήμιση;</label>
+                <div class="likert-scale">
+                    <label class="likert-option"><input type="radio" name="q1" value="1">1<br><small>Καθόλου</small></label>
+                    <label class="likert-option"><input type="radio" name="q1" value="2">2</label>
+                    <label class="likert-option"><input type="radio" name="q1" value="3">3</label>
+                    <label class="likert-option"><input type="radio" name="q1" value="4">4</label>
+                    <label class="likert-option"><input type="radio" name="q1" value="5">5<br><small>Πολύ</small></label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <label>2. Πόσο <strong>εκνευρισμό</strong> (irritation) νιώσατε;</label>
+                <div class="likert-scale">
+                    <label class="likert-option"><input type="radio" name="q2" value="1">1</label>
+                    <label class="likert-option"><input type="radio" name="q2" value="2">2</label>
+                    <label class="likert-option"><input type="radio" name="q2" value="3">3</label>
+                    <label class="likert-option"><input type="radio" name="q2" value="4">4</label>
+                    <label class="likert-option"><input type="radio" name="q2" value="5">5</label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <label>3. Πού εστίασε κυρίως το βλέμμα σας; (Self-reported Eye Tracking)</label>
+                <select id="q3" style="width: 100%; padding: 8px; margin-top:5px;">
+                    <option value="" disabled selected>Επιλέξτε...</option>
+                    <option value="Content">Στο περιεχόμενο της διαφήμισης (Προϊόν/Μάρκα)</option>
+                    <option value="SkipButton">Στο κουμπί "Skip" / Χρονόμετρο</option>
+                    <option value="Elsewhere">Κάπου αλλού / Περίμενα να τελειώσει</option>
+                </select>
+            </div>
+             <div class="question-block">
+                <label>4. Θυμάστε ποιο προϊόν διαφημίστηκε (Brand Recall);</label>
+                <input type="text" id="q4" placeholder="Γράψτε το προϊόν ή τη μάρκα αν θυμάστε" style="width:98%; padding:5px;">
+            </div>
+            <div class="question-block">
+                <label id="q5-label">5. Σχετικά με το βίντεο που μόλις είδατε:</label>
+                <select id="q5" style="width: 100%; padding: 8px; margin-top:5px;">
+                    <option value="" disabled selected>Επιλέξτε...</option>
+                </select>
+                <input type="text" id="q5-text" placeholder="Γράψτε την απάντηση σας" style="width:98%; padding:5px; margin-top:5px; display:none;">
+            </div>
+        </form>
+        <div id="validation-error" style="color: #e74c3c; font-weight: bold; margin-bottom: 10px; display: none;">
+            ⚠️ Παρακαλώ απαντήστε όλες τις ερωτήσεις πριν συνεχίσετε.
+        </div>
+        <button class="btn" onclick="validateAndProceed()">Επόμενο Σενάριο</button>
+    </div>
+</div>
+
+<div class="container hidden" id="ranking-screen">
+    <h1>Τελική Αξιολόγηση</h1>
+    <p class="section-subtitle">Παρακαλώ ολοκληρώστε την τελική αξιολόγηση πριν συνεχίσετε.</p>
+
+    <!-- Ενότητα Α: Κατάταξη (Ranking) -->
+    <div class="question-block">
+        <h3 class="section-title">Ενότητα Α: Κατάταξη (Ranking)</h3>
+        <p class="section-subtitle">Επιλέξτε τις 3 πιο ενοχλητικές διαφημίσεις με σειρά προτεραιότητας (1η, 2η, 3η).</p>
+        <div class="ranking-grid">
+            <div>
+                <label for="rank-1">1η πιο ενοχλητική</label>
+                <select id="rank-1">
+                    <option value="" disabled selected>Επιλέξτε...</option>
+                    <option value="vitam">ΒΙΤΑΜ</option>
+                    <option value="ion">ΣΟΚΟΦΡΕΤΑ ION</option>
+                    <option value="ikea">ΙΚΕΑ</option>
+                    <option value="milko">ΜΙΛΚΟ</option>
+                    <option value="aegean">AEGEAN</option>
+                    <option value="nike">NIKE</option>
+                </select>
+            </div>
+            <div>
+                <label for="rank-2">2η πιο ενοχλητική</label>
+                <select id="rank-2">
+                    <option value="" disabled selected>Επιλέξτε...</option>
+                    <option value="vitam">ΒΙΤΑΜ</option>
+                    <option value="ion">ΣΟΚΟΦΡΕΤΑ ION</option>
+                    <option value="ikea">ΙΚΕΑ</option>
+                    <option value="milko">ΜΙΛΚΟ</option>
+                    <option value="aegean">AEGEAN</option>
+                    <option value="nike">NIKE</option>
+                </select>
+            </div>
+            <div>
+                <label for="rank-3">3η πιο ενοχλητική</label>
+                <select id="rank-3">
+                    <option value="" disabled selected>Επιλέξτε...</option>
+                    <option value="vitam">ΒΙΤΑΜ</option>
+                    <option value="ion">ΣΟΚΟΦΡΕΤΑ ION</option>
+                    <option value="ikea">ΙΚΕΑ</option>
+                    <option value="milko">ΜΙΛΚΟ</option>
+                    <option value="aegean">AEGEAN</option>
+                    <option value="nike">NIKE</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ενότητα Β: Παράγοντες Ενόχλησης -->
+    <div class="question-block">
+        <h3 class="section-title">Ενότητα Β: Γενική Αντίληψη Ενόχλησης</h3>
+        <p class="section-subtitle">Ενοχλητική θεωρώ μια διαφήμιση που...</p>
+
+        <label>...με διακόπτει και μου αποσπά την προσοχή.</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="irrit_1" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="irrit_1" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="irrit_1" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="irrit_1" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="irrit_1" value="5">5</label>
+        </div>
+
+        <label>...είναι υποχρεωτική (δεν μπορώ να την αποφύγω).</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="irrit_2" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="irrit_2" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="irrit_2" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="irrit_2" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="irrit_2" value="5">5</label>
+        </div>
+
+        <label>...έχει μεγάλη διάρκεια.</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="irrit_3" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="irrit_3" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="irrit_3" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="irrit_3" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="irrit_3" value="5">5</label>
+        </div>
+
+        <label>...μου προβάλλεται συχνά.</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="irrit_4" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="irrit_4" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="irrit_4" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="irrit_4" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="irrit_4" value="5">5</label>
+        </div>
+
+        <label>...το περιεχόμενό της είναι ενοχλητικό/προσβλητικό.</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="irrit_5" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="irrit_5" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="irrit_5" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="irrit_5" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="irrit_5" value="5">5</label>
+        </div>
+
+        <label>...δεν με ενδιαφέρει το προϊόν.</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="irrit_6" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="irrit_6" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="irrit_6" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="irrit_6" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="irrit_6" value="5">5</label>
+        </div>
+
+        <label>...είναι εξατομικευμένη (βασίζεται σε προηγούμενη δραστηριότητά μου online).</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="irrit_7" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="irrit_7" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="irrit_7" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="irrit_7" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="irrit_7" value="5">5</label>
+        </div>
+    </div>
+
+    <!-- Ενότητα Γ: Επίδραση στη Συμπεριφορά -->
+    <div class="question-block">
+        <h3 class="section-title">Ενότητα Γ: Επίδραση στη Συμπεριφορά</h3>
+
+        <label>Οι διαφημίσεις μιας επωνυμίας με κάνουν να διαμορφώνω θετική ή αρνητική άποψη για αυτή.</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="effect_1" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="effect_1" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="effect_1" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="effect_1" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="effect_1" value="5">5</label>
+        </div>
+
+        <label>Οι διαφημίσεις μιας επωνυμίας με επηρεάζουν στο αν θα την επιλέξω για αγορές στο μέλλον.</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="effect_2" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="effect_2" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="effect_2" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="effect_2" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="effect_2" value="5">5</label>
+        </div>
+
+        <label>Οι διαφημίσεις που προβάλλει ένας ιστότοπος με κάνουν να διαμορφώνω θετική ή αρνητική άποψη για αυτόν.</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="effect_3" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="effect_3" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="effect_3" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="effect_3" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="effect_3" value="5">5</label>
+        </div>
+
+        <label>Οι διαφημίσεις που προβάλλει ένας ιστότοπος με επηρεάζουν στο αν θα τον ξαναεπισκεφτώ στο μέλλον.</label>
+        <div class="likert-scale">
+            <label class="likert-option"><input type="radio" name="effect_4" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="effect_4" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="effect_4" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="effect_4" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="effect_4" value="5">5</label>
+        </div>
+    </div>
+
+    <div id="ranking-validation-error" style="color: #e74c3c; font-weight: bold; margin-bottom: 10px; display: none;">
+        ⚠️ Παρακαλώ ολοκληρώστε την κατάταξη και όλες τις ερωτήσεις.
+    </div>
+    <div id="submission-wait" style="color: #1e88e5; font-weight: 600; margin-bottom: 10px; display: none;">
+        Παρακαλώ περιμένετε... γίνεται αποστολή των απαντήσεων.
+    </div>
+    <button class="btn" id="ranking-continue-btn" disabled>Συνέχεια</button>
+</div>
+
+<div class="calibration-overlay" id="calibration-overlay">
+    <div class="calibration-card">
+        <h3 class="calibration-title">Βαθμονόμηση Eye‑Tracking</h3>
+        <p class="calibration-subtitle">Κοίταξε κάθε κουκκίδα και κάνε κλικ πάνω της 5 φορές.</p>
+        <div class="calibration-instructions">
+            1) Επέτρεψε την πρόσβαση στην κάμερα. 2) Κοίτα τον κύκλο (όχι το ποντίκι). 3) Κάνε 5 κλικ σε κάθε σημείο.
+            <br>💡 Κράτα το κεφάλι σου σταθερό και κούνα μόνο τα μάτια. Αν αλλάξει η γωνία του προσώπου μετά τη βαθμονόμηση, τα δεδομένα μπορεί να βγουν εκτός στόχου.
+        </div>
+        <div class="calibration-grid" id="calibration-grid">
+            <button class="calib-dot" data-calib="1">1</button>
+            <button class="calib-dot" data-calib="2">2</button>
+            <button class="calib-dot" data-calib="3">3</button>
+            <button class="calib-dot" data-calib="4">4</button>
+            <button class="calib-dot" data-calib="5">5</button>
+            <button class="calib-dot" data-calib="6">6</button>
+            <button class="calib-dot" data-calib="7">7</button>
+            <button class="calib-dot" data-calib="8">8</button>
+            <button class="calib-dot" data-calib="9">9</button>
+        </div>
+        <div class="calibration-footer" id="calibration-status">Πρόοδος: 0/45 κλικ</div>
+        <button class="btn hidden" id="calibration-start-btn" type="button" style="margin-top:14px;">Ολοκλήρωση Βαθμονόμησης</button>
+    </div>
+</div>
+
+<div class="container hidden" id="thank-you">
+    <h1>Σας Ευχαριστούμε</h1>
+    <p>Η συμβολή σας στην έρευνα είναι πολύτιμη.</p>
+    <div style="background:#e8f5e9; padding:15px; border-radius:8px; margin-top:20px; border-left: 5px solid #27ae60;">
+        <h3>Ολοκληρώθηκε!</h3>
+        <p id="submission-status">Όλα τα δεδομένα καταγράφηκαν επιτυχώς.</p>
+    </div>
+    <button class="btn" onclick="location.reload()" style="margin-top:20px;">Νέα Συμμετοχή</button>
+</div>
+
+<div id="toast" class="toast">Αποθηκεύτηκε στο Google Sheet</div>
+
+<script src="webgazer-loader.js"></script>
+<script>
+    // Wait for WebGazer to be available (real or mock)
+    window.__webgazerReady = new Promise((resolve) => {
+        const check = setInterval(() => {
+            if (window.webgazer || window.__webgazerLoaded) {
+                clearInterval(check);
+                console.log('✅ WebGazer ready (real or simulated)');
+                resolve(true);
+            }
+        }, 100);
+        // Timeout after 15 seconds and load mock if needed
+        setTimeout(() => {
+            clearInterval(check);
+            if (!window.webgazer) {
+                console.warn('⚠️ WebGazer still not loaded, forcing mock...');
+                const mockScript = document.createElement('script');
+                mockScript.src = 'webgazer-mock.js';
+                document.head.appendChild(mockScript);
+                resolve(true);
+            } else {
+                resolve(true);
+            }
+        }, 15000);
+    });
+</script>
+
+<script>
+    // === Google Sheets Web App URL (αντικατάστησε μετά το Publish) ===
+    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcVrmPJd4r4NWRh1AT3ljdHb_FTIsc938APK8zvGQB_S-4O6f71QWWp5i8KPveLUZmMg/exec";
+
+    const scenarios = [
+        // ═══════════════════════════════════════════════════════════════
+        // BLOCK 1: Ad Formats & Placement
+        // ═══════════════════════════════════════════════════════════════
+
+        // 1. Recipe Part 1 (Pre-roll Skippable)
+        {
+            id: 1,
+            block: 1,
+            type: 'preroll_skippable',
+            title: "Block 1 - Recipe Part 1 (Pre-roll Skippable)",
+            desc: "",
+            videoSrc: "videos/recipe-part1.mp4",
+            adContent: { brand: "Nike", tagline: "Just Do It.", bg: "#111111" },
+            adVideoSrc: "ads/nike_ad.mp4",
+            mainContent: "recipe",
+            skippable: true,
+            adDuration: 15,
+            skipDelay: 5
+        },
+
+        // 2. Recipe Part 2 (Pre-roll Non-skippable)
+        {
+            id: 2,
+            block: 1,
+            type: 'preroll_nonskippable',
+            title: "Block 1 - Recipe Part 2 (Pre-roll Non-skippable)",
+            desc: "",
+            videoSrc: "videos/recipe-part2.mp4",
+            adContent: { brand: "Βιτάμ", tagline: "Γεύση που ξεχωρίζει.", bg: "#e67e22" },
+            adVideoSrc: "ads/bitam_ad.mp4",
+            mainContent: "recipe",
+            skippable: false,
+            adDuration: 15
+        },
+
+        // 3. Recipe Part 3 (Mid-roll Skippable)
+        {
+            id: 3,
+            block: 1,
+            type: 'midroll_skippable',
+            title: "Block 1 - Recipe Part 3 (Mid-roll Skippable)",
+            desc: "",
+            videoSrc: "videos/recipe-part3.mp4",
+            adContent: { brand: "Food Ad", tagline: "Γεύση που κερδίζει.", bg: "#c0392b" },
+            adVideoSrc: "ads/food_ad.mp4",
+            mainContent: "recipe",
+            skippable: true,
+            adDuration: 15,
+            skipDelay: 5,
+            interruptionPoint: 15000
+        },
+
+        // 4. NBA (Mid-roll Non-skippable)
+        {
+            id: 4,
+            block: 1,
+            type: 'midroll_nonskippable',
+            title: "Block 1 - NBA (Mid-roll Non-skippable)",
+            desc: "",
+            videoSrc: "videos/nba.mp4",
+            adContent: { brand: "Milko", tagline: "Η ενέργεια της ημέρας.", bg: "#2c3e50" },
+            adVideoSrc: "ads/milko_ad.mp4",
+            mainContent: "nba",
+            skippable: false,
+            adDuration: 20,
+            interruptionPoint: 20000
+        },
+
+        // ═══════════════════════════════════════════════════════════════
+        // BLOCK 2: Contextual Relevance
+        // ═══════════════════════════════════════════════════════════════
+
+        // 5. Fitness Part 1 (Relevant - Pre-roll Skippable)
+        {
+            id: 5,
+            block: 2,
+            type: 'preroll_skippable',
+            title: "Block 2 - Fitness Part 1 (Relevant)",
+            desc: "",
+            videoSrc: "videos/fitness-part1.mp4",
+            adContent: { brand: "Nike", tagline: "Just Do It.", bg: "#111111" },
+            adVideoSrc: "ads/nike_ad.mp4",
+            mainContent: "fitness",
+            skippable: true,
+            adDuration: 15,
+            skipDelay: 5,
+            relevance: "high"
+        },
+
+        // 6. Fitness Part 2 (Irrelevant - Pre-roll Skippable)
+        {
+            id: 6,
+            block: 2,
+            type: 'preroll_skippable',
+            title: "Block 2 - Fitness Part 2 (Irrelevant)",
+            desc: "",
+            videoSrc: "videos/fitness-part2.mp4",
+            adContent: { brand: "IKEA", tagline: "Ιδέες για κάθε χώρο.", bg: "#1e88e5" },
+            adVideoSrc: "ads/ikea_ad.mp4",
+            mainContent: "fitness",
+            skippable: true,
+            adDuration: 15,
+            skipDelay: 5,
+            relevance: "low"
+        },
+
+        // 7. Places Part 1 (Relevant - Mid-roll Skippable)
+        {
+            id: 7,
+            block: 2,
+            type: 'midroll_skippable',
+            title: "Block 2 - Places Part 1 (Relevant Mid-roll)",
+            desc: "",
+            videoSrc: "videos/places-part1.mp4",
+            adContent: { brand: "Travel Ad", tagline: "Ταξίδεψε σήμερα.", bg: "#16a085" },
+            adVideoSrc: "ads/places_ad.mp4",
+            mainContent: "places",
+            skippable: false,
+            skipDelay: 5,
+            interruptionPoint: 15000,
+            relevance: "high",
+            useLast30Seconds: false
+        },
+
+        // 8. Places Part 2 (Irrelevant - Mid-roll Skippable)
+        {
+            id: 8,
+            block: 2,
+            type: 'midroll_skippable',
+            title: "Block 2 - Places Part 2 (Irrelevant Mid-roll)",
+            desc: "",
+            videoSrc: "videos/places-part2.mp4",
+            adContent: { brand: "Food Ad", tagline: "Γεύση που κερδίζει.", bg: "#c0392b" },
+            adVideoSrc: "ads/food_ad.mp4",
+            mainContent: "places",
+            skippable: true,
+            adDuration: 15,
+            skipDelay: 5,
+            interruptionPoint: 15000,
+            relevance: "low"
+        }
+    ];
+
+    let currentStep = 0;
+    const MAX_MAIN_VIDEO_SECONDS = 60;
+    let timerInterval = null;
+    const responses = [];
+
+    // WebGazer tracking
+    let webgazerInitialized = false;
+    let activeScenarioId = null;
+    const gazeSamplesByScenario = {};
+    const aoiMetricsByScenario = {};
+    const MAX_GAZE_SAMPLES = 1500;
+    let isInteractionStep = false;
+    let adShown = false;
+    let adActive = false;
+    let currentAdMetrics = null;
+    const CALIBRATION_POINTS = 9;
+    const CALIBRATION_CLICKS_PER_POINT = 5;
+    const calibrationState = { done: new Set() };
+    let calibrationClicks = {};
+
+    async function startExperiment() {
+        if(!document.getElementById('age').value) {
+            alert('Παρακαλώ εισάγετε ηλικία.');
+            return;
+        }
+        const webgazerConsent = document.getElementById('webgazer-consent').value;
+        if (!webgazerConsent) {
+            alert('Παρακαλώ επιλέξτε αν θέλετε να χρησιμοποιηθεί το WebGazer.');
+            return;
+        }
+        if (webgazerConsent === 'Ναι') {
+            const ok = confirm('Θα ζητηθεί πρόσβαση στην κάμερα για eye‑tracking μέσω WebGazer. Θέλετε να συνεχίσετε;');
+            if (ok) {
+                if (!isSecureContext && location.hostname !== 'localhost') {
+                    updateWebgazerStatus(false, 'Eye Tracking: απαιτεί HTTPS');
+                    showToast('Το eye‑tracking απαιτεί ασφαλές περιβάλλον (HTTPS).');
+                    return;
+                }
+                updateWebgazerStatus(false, 'Eye Tracking: Αναμονή άδειας κάμερας...');
+                const permissionGranted = await requestCameraPermission();
+                if (!permissionGranted) return;
+                await initWebGazer(true);
+                showCalibration();
+                return;
+            }
+        }
+        proceedToExperiment();
+    }
+
+    async function requestCameraPermission() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            updateWebgazerStatus(false, 'Eye Tracking: κάμερα μη διαθέσιμη');
+            return false;
+        }
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            stream.getTracks().forEach(track => track.stop());
+            return true;
+        } catch (err) {
+            updateWebgazerStatus(false, 'Eye Tracking: δεν δόθηκε άδεια κάμερας');
+            showToast('Δεν δόθηκε άδεια στην κάμερα. Ενεργοποιήστε την και δοκιμάστε ξανά.');
+            return false;
+        }
+    }
+
+    function proceedToExperiment() {
+        document.getElementById('intro').classList.add('hidden');
+        document.getElementById('experiment-screen').classList.remove('hidden');
+        if (webgazerInitialized) {
+            updateWebgazerStatus(true, 'Eye Tracking: Καταγραφή...');
+        }
+        loadScenarioUI();
+    }
+
+    function showCalibration() {
+        calibrationState.done.clear();
+        calibrationClicks = {};
+        document.querySelectorAll('.calib-dot').forEach(dot => {
+            dot.classList.remove('done');
+            const id = dot.getAttribute('data-calib');
+            if (id) calibrationClicks[id] = 0;
+        });
+        document.getElementById('calibration-status').textContent = 'Πρόοδος: 0/45 κλικ';
+        document.getElementById('calibration-start-btn').classList.add('hidden');
+        document.getElementById('calibration-overlay').style.display = 'flex';
+        updateWebgazerStatus(true, 'Eye Tracking: Βαθμονόμηση...');
+    }
+
+    function hideCalibration() {
+        document.getElementById('calibration-overlay').style.display = 'none';
+    }
+
+    document.addEventListener('click', (e) => {
+        const dot = e.target.closest('.calib-dot');
+        if (!dot) return;
+        const id = dot.getAttribute('data-calib');
+        if (!id) return;
+        if (calibrationClicks[id] >= CALIBRATION_CLICKS_PER_POINT) return;
+
+        calibrationClicks[id] += 1;
+        if (calibrationClicks[id] >= CALIBRATION_CLICKS_PER_POINT) {
+            calibrationState.done.add(id);
+            dot.classList.add('done');
+        }
+
+        const totalClicks = Object.values(calibrationClicks).reduce((a, b) => a + b, 0);
+        const required = CALIBRATION_POINTS * CALIBRATION_CLICKS_PER_POINT;
+        document.getElementById('calibration-status').textContent = `Πρόοδος: ${totalClicks}/${required} κλικ`;
+
+        if (calibrationState.done.size >= CALIBRATION_POINTS) {
+            document.getElementById('calibration-status').textContent = '✅ Βαθμονόμηση ολοκληρώθηκε.';
+            document.getElementById('calibration-start-btn').classList.remove('hidden');
+        }
+    });
+
+    document.getElementById('calibration-start-btn').addEventListener('click', () => {
+        hideCalibration();
+        proceedToExperiment();
+    });
+
+    function loadScenarioUI() {
+        const scen = scenarios[currentStep];
+        document.getElementById('scenario-counter').innerText =
+            `Σενάριο ${currentStep + 1} / ${scenarios.length} (Block ${scen.block})`;
+        document.getElementById('scenario-instruction').innerText = scen.title;
+        document.getElementById('scenario-desc').innerText = scen.desc;
+
+        // Περιεχόμενο ερώτησης για το video (ανά ζεύγος σεναρίων)
+        const q5Label = document.getElementById('q5-label');
+        const q5Select = document.getElementById('q5');
+        const q5Text = document.getElementById('q5-text');
+
+        // Reset gaze samples for this scenario
+        activeScenarioId = scen.id;
+        gazeSamplesByScenario[scen.id] = [];
+        aoiMetricsByScenario[scen.id] = null;
+        currentAdMetrics = null;
+        adActive = false;
+        isInteractionStep = true;
+        adShown = false;
+        const contentQuestionMap = {
+            recipe: "5. Τι θυμάστε ότι είδατε/μαγειρεύτηκε στο βίντεο;",
+            places: "5. Ποιο μέρος/τοπίο είδατε στο βίντεο;",
+            nba: "5. Τι είδατε κυρίως στο NBA βίντεο;",
+            fitness: "5. Τι είδους άσκηση είδατε στο βίντεο;"
+        };
+        const contentOptionsMap = {
+            recipe: ["Παρασκευή φαγητού/συνταγής", "Κουζίνα/σκεύη", "Ταξίδι/τοπία", "Άσκηση/γυμναστική"],
+            places: ["Ταξίδι/τοπία", "Πόλη/δρόμοι", "Μαγείρεμα", "Άσκηση/γυμναστική"],
+            nba: ["Φάσεις αγώνα", "Παίκτες/ομάδες", "Κερκίδες/κοινό", "Στιγμιότυπα"],
+            fitness: ["Γυμναστική/προπόνηση", "Εξοπλισμός fitness", "Ταξίδι/τοπία", "Μαγείρεμα"]
+        };
+
+        const scenarioQuestionOverrides = {
+            // --- RECIPE ---
+            1: {
+                label: "5. Ποιο ήταν το βασικό υλικό της συνταγής;",
+                options: ["Μπρόκολο", "Κουνουπίδι", "Κρεμμύδι", "Καρότο"],
+                inputType: "select"
+            },
+            2: {
+                label: "5. Τι συνταγή φτιάχνει στο βίντεο;",
+                options: ["Ψαρόσουπα", "Ψητά λαχανικά", "Σαλάτα", "Σούπα"],
+                inputType: "select"
+            },
+            3: {
+                label: "5. Ποια κίνηση/βήμα της συνταγής ξεχώρισε;",
+                options: ["Κόψιμο υλικών", "Σοτάρισμα", "Βράσιμο", "Σερβίρισμα"],
+                inputType: "select"
+            },
+            // --- NBA ---
+            4: {
+                label: "5. Τι είδατε κυρίως στο βίντεο του NBA;",
+                options: ["Καρφώματα (Dunks)", "Τρίποντα", "Άμυνες", "Στιγμιότυπα φιλάθλων"],
+                inputType: "select"
+            },
+            // --- FITNESS ---
+            5: {
+                label: "5. Ποια άσκηση κάνει πρώτη στο βίντεο;",
+                options: ["FINGERS OUT ROCKS", "FIST ROCKERS", "FINGER PUSH UPS", "SQUATS"],
+                inputType: "select"
+            },
+            6: {
+                label: "5. Ποια περιοχή του σώματος γυμνάζει κυρίως;",
+                options: ["Χέρια/Καρποί", "Πόδια", "Κοιλιακοί", "Πλάτη"],
+                inputType: "select"
+            },
+            // --- PLACES ---
+            7: {
+                label: "5. Ποιο τοπίο/μέρος εμφανίστηκε;",
+                options: ["Hallstatt", "Ashikaga Flower Park", "Skagit Valley", "Hitachi Seaside Park"],
+                inputType: "select"
+            },
+            8: {
+                label: "5. Τι είδους τοπίο κυριαρχεί στο βίντεο;",
+                options: ["Βουνό/Λίμνη", "Θάλασσα/Παραλία", "Λουλούδια/Πάρκο", "Πόλη/Κτίρια"],
+                inputType: "select"
+            }
+        };
+
+        const override = scenarioQuestionOverrides[scen.id];
+        const baseLabel = override?.label || contentQuestionMap[scen.mainContent] || "5. Τι θυμάστε ότι είδατε στο βίντεο;";
+        const cleanedLabel = baseLabel.replace(/^5\.\s*/i, "");
+        q5Label.innerText = `5. Σχετικά με το βίντεο που μόλις είδατε... ${cleanedLabel}`;
+
+        const inputType = override?.inputType || "select";
+        if (inputType === "text") {
+            q5Select.style.display = 'none';
+            q5Text.style.display = 'block';
+            q5Text.value = "";
+        } else {
+            q5Text.style.display = 'none';
+            q5Select.style.display = 'block';
+            const options = override?.options || contentOptionsMap[scen.mainContent] || ["Μαγείρεμα", "Ταξίδι", "How‑to", "Γυμναστική"];
+            q5Select.innerHTML = '<option value="" disabled selected>Επιλέξτε...</option>' +
+                options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+        }
+
+        // reset UI
+        const mainPlayBtn = document.getElementById('main-play-btn');
+        const contentStatus = document.getElementById('content-status');
+        const adLayer = document.getElementById('ad-layer');
+        const video = document.getElementById('main-video');
+        const interactionStep = document.getElementById('interaction-step');
+        const completeBtn = document.getElementById('complete-browsing-btn');
+        const interactionError = document.getElementById('interaction-error');
+
+        // Σταμάτημα και reset βίντεο
+        video.pause();
+        video.currentTime = 0;
+        video.ontimeupdate = null;
+        video.onended = null;
+        
+        // 🔥 ΚΡΙΣΙΜΟ: Φόρτωση του σωστού video source για κάθε σενάριο
+        // Αλλαγή του src απευθείας (όχι μέσω <source> tag)
+        video.src = scen.videoSrc;
+        video.muted = true; // Για autoplay policy
+        video.load(); // Ξεκίνα το loading του νέου video
+        
+        // Debug logging (για thesis - μπορεί να αφαιρεθεί)
+        video.onloadeddata = () => {
+            console.log(`✅ Video loaded: ${scen.videoSrc} (Scenario ${currentStep + 1})`);
+        };
+        video.onerror = (e) => {
+            console.error(`❌ Video error: ${scen.videoSrc}`, e);
+        };
+        
+        video.controls = false;
+        mainPlayBtn.style.display = 'flex';
+        contentStatus.classList.add('hidden');
+        adLayer.style.display = 'none';
+        interactionStep?.classList.remove('hidden');
+        if (completeBtn) completeBtn.disabled = true;
+        if (interactionError) interactionError.style.display = 'none';
+        document.getElementById('questions-area').classList.add('hidden');
+
+        // clear form
+        document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+        document.getElementById('q3').selectedIndex = 0;
+        document.getElementById('q4').value = "";
+        q5Select.selectedIndex = 0;
+        q5Text.value = "";
+    }
+
+    function getQ5Value() {
+        const q5Select = document.getElementById('q5');
+        const q5Text = document.getElementById('q5-text');
+        return q5Text.style.display !== 'none' ? q5Text.value.trim() : q5Select.value;
+    }
+
+    function collectScenarioResponse() {
+        const scen = scenarios[currentStep];
+        const q1 = document.querySelector('input[name="q1"]:checked')?.value || "";
+        const q2 = document.querySelector('input[name="q2"]:checked')?.value || "";
+        const q3 = document.getElementById('q3').value || "";
+        const q4 = document.getElementById('q4').value.trim();
+        const q5Label = document.getElementById('q5-label').innerText;
+        const q5 = getQ5Value();
+        const age = document.getElementById('age').value || "";
+        const gender = document.getElementById('gender').value || "";
+        const adBlocker = document.getElementById('ad-blocker').value || "";
+        const device = document.getElementById('device').value || "";
+        const webgazerConsent = document.getElementById('webgazer-consent').value || "";
+
+        const gazeSamples = gazeSamplesByScenario[scen.id] || [];
+        const aoiMetrics = aoiMetricsByScenario[scen.id] || {};
+
+        return {
+            timestamp: new Date().toISOString(),
+            age,
+            gender,
+            adBlocker,
+            device,
+            webgazerConsent,
+            scenarioId: scen.id,
+            block: scen.block,
+            type: scen.type,
+            videoSrc: scen.videoSrc,
+            adBrand: scen.adContent?.brand || "",
+            skippable: !!scen.skippable,
+            q1,
+            q2,
+            q3,
+            q4,
+            q5Question: q5Label,
+            q5Answer: q5,
+            gazeCount: gazeSamples.length,
+            gazeSamples: JSON.stringify(gazeSamples),
+            aoiTTFFms: aoiMetrics.ttff ?? "",
+            aoiTotalFixationMs: Math.round(aoiMetrics.totalFixationMs || 0),
+            aoiVisitsCount: aoiMetrics.visits ?? 0
+        };
+    }
+
+    async function initWebGazer(showPreview = false) {
+        if (webgazerInitialized) return;
+        
+        // Wait for WebGazer to load
+        if (window.__webgazerReady) {
+            const ready = await window.__webgazerReady;
+            if (!ready) {
+                updateWebgazerStatus(false, 'WebGazer: δεν φορτώθηκε');
+                return;
+            }
+        }
+        
+        if (!isSecureContext && location.hostname !== 'localhost') {
+            updateWebgazerStatus(false, 'Eye Tracking: απαιτεί HTTPS');
+            return;
+        }
+        if (typeof webgazer === 'undefined') {
+            updateWebgazerStatus(false, 'WebGazer: δεν φορτώθηκε');
+            return;
+        }
+        webgazerInitialized = true;
+
+        webgazer.setGazeListener((data, timestamp) => {
+            if (!data || !activeScenarioId) return;
+            const samples = gazeSamplesByScenario[activeScenarioId];
+            if (!samples || samples.length >= MAX_GAZE_SAMPLES) return;
+
+            const mainVideo = document.getElementById('main-video');
+            const adVideo = document.getElementById('ad-video');
+            const mainPlaying = !!mainVideo && !mainVideo.paused;
+            const adPlaying = !!adVideo && !adVideo.paused;
+            const isVideoPlaying = (adActive && adPlaying) || (!adActive && mainPlaying);
+            if (!isVideoPlaying) return;
+
+            const ts = typeof timestamp === 'number' ? timestamp : performance.now();
+            const gazeX = Math.round(data.x || 0);
+            const gazeY = Math.round(data.y || 0);
+
+            samples.push({
+                t: ts,
+                x: gazeX,
+                y: gazeY,
+                w: window.innerWidth,
+                h: window.innerHeight
+            });
+
+            if (adActive && currentAdMetrics && window.currentAdElement) {
+                const rect = window.currentAdElement.getBoundingClientRect();
+                currentAdMetrics.aoiRect = rect;
+                const inAoi = gazeX >= rect.left && gazeX <= rect.right && gazeY >= rect.top && gazeY <= rect.bottom;
+
+                if (currentAdMetrics.lastTs != null) {
+                    const delta = Math.max(0, ts - currentAdMetrics.lastTs);
+                    if (inAoi) {
+                        currentAdMetrics.totalFixationMs += delta;
+                    }
+                }
+
+                if (inAoi && !currentAdMetrics.inAoi) {
+                    currentAdMetrics.visits += 1;
+                    if (currentAdMetrics.ttff == null) {
+                        const diff = ts - currentAdMetrics.adStartTs;
+                        currentAdMetrics.ttff = Math.max(1, Math.round(diff));
+                    }
+                }
+
+                currentAdMetrics.inAoi = inAoi;
+                currentAdMetrics.lastTs = ts;
+            }
+
+            updateGazeCounter();
+        }).begin();
+
+        // Ρυθμίσεις όπως στο αρχείο που έστειλες
+        webgazer.showVideoPreview(true)
+            .showPredictionPoints(true)
+            .applyKalmanFilter(true);
+
+        // Ενεργοποίηση των "πράσινων" στοιχείων
+        if (typeof webgazer.showFaceOverlay === 'function') {
+            webgazer.showFaceOverlay(true);
+        }
+        if (typeof webgazer.showFaceFeedbackBox === 'function') {
+            webgazer.showFaceFeedbackBox(true);
+        }
+
+        ensureWebgazerUI();
+
+        setTimeout(() => {
+            updateWebgazerStatus(true, 'Eye Tracking: Ενεργό');
+        }, 1500);
+    }
+
+    function ensureWebgazerUI() {
+        let tries = 0;
+        const timer = setInterval(() => {
+            tries += 1;
+            const dot = document.getElementById('webgazerGazeDot');
+            const video = document.getElementById('webgazerVideoFeed');
+            const canvas = document.getElementById('webgazerVideoCanvas');
+            if (dot) dot.style.display = 'block';
+            if (video) video.style.display = 'block';
+            if (canvas) canvas.style.display = 'block';
+
+            if (dot || video || tries > 20) {
+                clearInterval(timer);
+                if (!dot && !video) {
+                    updateWebgazerStatus(false, 'Eye Tracking: δεν εμφανίστηκε η κάμερα');
+                    showToast('Δεν εμφανίστηκε το παράθυρο κάμερας του WebGazer.');
+                }
+            }
+        }, 250);
+    }
+
+    function updateWebgazerStatus(active, message) {
+        const statusEl = document.getElementById('webgazer-status');
+        const dotEl = document.getElementById('status-dot');
+        const textEl = document.getElementById('status-text');
+        if (!statusEl || !dotEl || !textEl) return;
+        statusEl.classList.remove('hidden');
+        textEl.textContent = message;
+        dotEl.classList.toggle('inactive', !active);
+    }
+
+    function updateGazeCounter() {
+        const counter = document.getElementById('gaze-counter');
+        if (!counter) return;
+        const total = Object.values(gazeSamplesByScenario).reduce((sum, arr) => sum + (arr?.length || 0), 0);
+        counter.textContent = `${total} points`;
+    }
+
+    async function sendResponse(payload) {
+        if (!SHEET_WEB_APP_URL || SHEET_WEB_APP_URL.includes('REPLACE_ME')) return;
+        
+        try {
+            // Μετατροπή των δεδομένων σε μορφή URL parameters (key=value)
+            // Αυτό είναι κρίσιμο για να τα διαβάσει σωστά το Script
+            const formBody = new URLSearchParams(payload);
+
+            // Προσπάθεια με CORS για επιβεβαίωση
+            const corsResponse = await fetch(SHEET_WEB_APP_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            });
+
+            if (corsResponse.ok) {
+                const label = payload.scenarioId || payload.batchId || 'final';
+                console.log(`✅ Data confirmed for ${label}`);
+                showToast('Αποθηκεύτηκε στο Google Sheet (επιβεβαιώθηκε)');
+                return true;
+            }
+
+            // Αν δεν επιτρέπεται CORS από το script, κάνουμε fallback
+            await fetch(SHEET_WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            });
+            
+            const label = payload.scenarioId || payload.batchId || 'final';
+            console.log(`✅ Data sent (unverified) for ${label}`);
+            showToast('Εστάλη (χωρίς επιβεβαίωση)');
+            return true;
+        } catch (err) {
+            console.error('❌ Upload error:', err);
+            // Δεν πετάμε alert για να μην διακόψουμε τη ροή, απλά δείχνουμε το toast
+            showToast('Σφάλμα σύνδεσης - Συνεχίστε');
+            return false;
+        }
+    }
+
+    function getLikertValue(name) {
+        return document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+    }
+
+    function collectRankingResponse() {
+        return {
+            timestamp: new Date().toISOString(),
+            rank1: document.getElementById('rank-1')?.value || "",
+            rank2: document.getElementById('rank-2')?.value || "",
+            rank3: document.getElementById('rank-3')?.value || "",
+            irrit_1: getLikertValue('irrit_1'),
+            irrit_2: getLikertValue('irrit_2'),
+            irrit_3: getLikertValue('irrit_3'),
+            irrit_4: getLikertValue('irrit_4'),
+            irrit_5: getLikertValue('irrit_5'),
+            irrit_6: getLikertValue('irrit_6'),
+            irrit_7: getLikertValue('irrit_7'),
+            effect_1: getLikertValue('effect_1'),
+            effect_2: getLikertValue('effect_2'),
+            effect_3: getLikertValue('effect_3'),
+            effect_4: getLikertValue('effect_4')
+        };
+    }
+
+    async function sendFinalPayload() {
+        const batchId = `batch_${Date.now()}`;
+        const rankingData = collectRankingResponse();
+        
+        // 1. Αποστολή των Ranking Data (Τελική Αξιολόγηση)
+        // Τα στέλνουμε "ανοιχτά" για να γεμίσουν τις στήλες στο Sheet
+        const finalRankingPayload = {
+            ...rankingData,
+            type: 'final_ranking',
+            batchId: batchId,
+            // Προσθέτουμε ξανά τα δημογραφικά για σιγουριά
+            age: document.getElementById('age')?.value || "",
+            gender: document.getElementById('gender')?.value || "",
+            adBlocker: document.getElementById('ad-blocker')?.value || "",
+            device: document.getElementById('device')?.value || "",
+            webgazerConsent: document.getElementById('webgazer-consent')?.value || ""
+        };
+
+        // Στέλνουμε το Ranking
+        const ok = await sendResponse(finalRankingPayload);
+
+        // 2. Αποστολή των Scenarios (που έχουν μαζευτεί στη λίστα responses)
+        // Αυτά στέλνονται ένα-ένα για να είναι καθαρά στο Sheet
+        for (const item of responses) {
+            await sendResponse({ ...item, batchId: batchId });
+        }
+
+        const status = document.getElementById('submission-status');
+        if (status) {
+            status.textContent = ok
+                ? 'Η αποστολή ολοκληρώθηκε και επιβεβαιώθηκε.'
+                : 'Η αποστολή ολοκληρώθηκε (χωρίς επιβεβαίωση).';
+        }
+    }
+
+    function showToast(message) {
+        return;
+    }
+
+    function runScenarioLogic() {
+        const scen = scenarios[currentStep];
+        const mainPlayBtn = document.getElementById('main-play-btn');
+        const contentStatus = document.getElementById('content-status');
+        const video = document.getElementById('main-video');
+        const completeBtn = document.getElementById('complete-browsing-btn');
+        let maxStopHandled = false;
+
+        // Ανεξάρτητα από τύπο σεναρίου, αρχικά σταματάμε το βίντεο
+        mainPlayBtn.style.display = 'none';
+        video.pause();
+        video.currentTime = 0;
+
+        video.ontimeupdate = () => {
+            if (maxStopHandled) return;
+            if (video.currentTime >= MAX_MAIN_VIDEO_SECONDS) {
+                maxStopHandled = true;
+                video.pause();
+                video.currentTime = MAX_MAIN_VIDEO_SECONDS;
+
+                if (scen.type.includes('postroll')) {
+                    if (completeBtn) completeBtn.disabled = false;
+                    contentStatus.classList.add('hidden');
+                    startInstreamAd(scen);
+                } else {
+                    if (completeBtn) completeBtn.disabled = false;
+                    contentStatus.classList.remove('hidden');
+                    contentStatus.innerHTML = "<span>Το βίντεο ολοκληρώθηκε.</span>";
+                }
+            }
+        };
+
+        // Mid-roll: Interrupt video at specified point
+        if (scen.type.includes('midroll')) {
+            contentStatus.classList.remove('hidden');
+            contentStatus.innerHTML = "<span>Το βίντεο παίζει...</span>";
+            
+            // Ενεργοποίηση ήχου πριν το mid-roll
+            video.muted = false;
+
+            // Ξεκίνα το βίντεο
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => console.log('Autoplay blocked:', e));
+            }
+
+            video.onended = () => {
+                if (completeBtn) completeBtn.disabled = false;
+            };
+            
+            // Διακοπή στο καθορισμένο σημείο
+            setTimeout(() => {
+                video.pause();
+                contentStatus.classList.add('hidden');
+                startInstreamAd(scen);
+            }, scen.interruptionPoint || 6000);
+        }
+        // Post-roll: Play video first, then show ad
+        else if (scen.type.includes('postroll')) {
+            contentStatus.classList.remove('hidden');
+            contentStatus.innerHTML = "<span>Παρακολουθείτε το βίντεο...</span>";
+            
+            // Ξεκίνα το βίντεο
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => console.log('Autoplay blocked:', e));
+            }
+            
+            // Όταν τελειώσει το βίντεο, εμφάνισε τη διαφήμιση
+            video.onended = () => {
+                if (completeBtn) completeBtn.disabled = false;
+                contentStatus.classList.add('hidden');
+                startInstreamAd(scen);
+            };
+        }
+        // Pre-roll: Show ad immediately (δεν παίζει βίντεο ακόμα)
+        else {
+            startInstreamAd(scen);
+        }
+    }
+
+    function startInstreamAd(scen, isSponsoredFeed = false) {
+        const adLayer = document.getElementById('ad-layer');
+        const adVisual = document.getElementById('ad-visual');
+        const adControls = document.querySelector('.ad-controls');
+        const adBrand = document.getElementById('ad-brand-name');
+        const adTag = document.getElementById('ad-tagline');
+        const adBadge = document.getElementById('ad-badge');
+        const adVideo = document.getElementById('ad-video');
+        const video = document.getElementById('main-video');
+
+        // Σταμάτημα βίντεο
+        video.pause();
+        video.controls = false;
+        
+        // Εμφάνιση ad-layer πάνω στο βίντεο
+        adLayer.style.display = 'flex';
+        adLayer.style.visibility = 'visible';
+        adVisual.style.backgroundColor = scen.adContent.bg;
+        adBrand.innerText = scen.adContent.brand;
+        adTag.innerText = scen.adContent.tagline;
+
+        let duration = scen.adDuration || 15;
+        let timeLeft = duration;
+        let elapsed = 0;
+        const timerDisplay = document.getElementById('ad-timer');
+        const skipBtn = document.getElementById('skip-btn');
+        const skipText = document.getElementById('skip-text');
+        const progressBar = document.getElementById('ad-progress');
+        const skipContainer = document.getElementById('skip-container');
+        const useLast30Seconds = scen.useLast30Seconds === true;
+
+        // Ad video (αν υπάρχει)
+        if (scen.adVideoSrc) {
+            adVideo.src = scen.adVideoSrc;
+            adVideo.style.display = 'block';
+            adVideo.currentTime = 0;
+            adVideo.muted = false;
+            adVideo.volume = 1;
+            adVideo.onended = () => endInstreamAd();
+            adVideo.onloadedmetadata = () => {
+                if (useLast30Seconds && adVideo.duration) {
+                    const startAt = Math.max(adVideo.duration - 30, 0);
+                    adVideo.currentTime = startAt;
+                    duration = Math.ceil(adVideo.duration - startAt);
+                    timeLeft = duration;
+                    timerDisplay.innerText = `0:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+                    adVideo.play().catch(() => {});
+                    return;
+                }
+
+                if (!scen.adDuration && adVideo.duration) {
+                    duration = Math.ceil(adVideo.duration);
+                    timeLeft = duration;
+                    timerDisplay.innerText = `0:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+                }
+            };
+
+            if (!useLast30Seconds) {
+                adVideo.play().catch(() => {
+                    // Αν μπλοκαριστεί, παραμένει muted και εμφανίζεται το κάδρο
+                    adVideo.muted = true;
+                });
+            }
+
+            adVisual.style.display = 'none';
+            if (adControls) adControls.style.display = 'flex';
+            adVisual.style.backgroundColor = 'transparent';
+        } else {
+            adVideo.pause();
+            adVideo.removeAttribute('src');
+            adVideo.style.display = 'none';
+            adVisual.style.display = 'block';
+            if (adControls) adControls.style.display = 'flex';
+        }
+
+        // AOI setup
+        const aoiElement = adVideo.style.display === 'block' ? adVideo : adVisual;
+        window.currentAdElement = aoiElement;
+        adActive = true;
+        adShown = true;
+        currentAdMetrics = {
+            adStartTs: performance.now(),
+            ttff: null,
+            totalFixationMs: 0,
+            visits: 0,
+            inAoi: false,
+            lastTs: null,
+            aoiRect: aoiElement.getBoundingClientRect()
+        };
+        aoiMetricsByScenario[scen.id] = currentAdMetrics;
+
+        if (isSponsoredFeed) {
+            adBadge.innerText = "Sponsored";
+        } else {
+            adBadge.innerText = "Διαφήμιση";
+        }
+
+        skipBtn.classList.remove('active');
+        skipBtn.onclick = null;
+
+        if (scen.skippable) {
+            const skipDelay = scen.skipDelay || 5;
+            skipText.innerText = `Skip in ${skipDelay}`;
+            skipBtn.onclick = () => endInstreamAd();
+            if (skipContainer) skipContainer.style.display = 'block';
+        } else {
+            skipText.innerText = "";
+            if (skipContainer) skipContainer.style.display = 'none';
+        }
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            elapsed++;
+            timerDisplay.innerText = `0:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+            progressBar.style.width = `${(elapsed / duration) * 100}%`;
+
+            if (scen.skippable && elapsed >= (scen.skipDelay || 5)) {
+                skipBtn.classList.add('active');
+                skipText.innerText = "SKIP AD ⏭";
+            }
+
+            if (timeLeft <= 0) {
+                endInstreamAd();
+            }
+        }, 1000);
+    }
+
+    function endInstreamAd() {
+        clearInterval(timerInterval);
+        document.getElementById('ad-layer').style.display = 'none';
+
+        const adVideo = document.getElementById('ad-video');
+        adVideo.pause();
+        adVideo.currentTime = 0;
+        adVideo.removeAttribute('src');
+        adVideo.style.display = 'none';
+
+        const scen = scenarios[currentStep];
+        const contentStatus = document.getElementById('content-status');
+        const video = document.getElementById('main-video');
+        const completeBtn = document.getElementById('complete-browsing-btn');
+        const interactionError = document.getElementById('interaction-error');
+
+        // Διατηρούμε κλειδωμένα τα controls (χωρίς δυνατότητα seek)
+        video.controls = false;
+
+        if (scen.type.includes('postroll')) {
+            contentStatus.classList.remove('hidden');
+            contentStatus.innerHTML = "<span>Το βίντεο ολοκληρώθηκε.</span>";
+        } else {
+            // Συνέχιση του βίντεο
+            video.muted = false; // 🔊 Ενεργοποίηση ήχου μετά τη διαφήμιση
+            video.play().catch(err => {
+                console.log('Autoplay blocked, trying muted:', err);
+                // Fallback: αν μπλοκαριστεί, κράτα το muted
+                video.muted = true;
+                video.play().catch(e => console.error('Video play failed:', e));
+            });
+            contentStatus.classList.remove('hidden');
+            contentStatus.innerHTML = "<span>Το βίντεο συνεχίζεται...</span>";
+            video.onended = () => {
+                if (completeBtn) completeBtn.disabled = false;
+            };
+        }
+
+        adActive = false;
+        if (currentAdMetrics) {
+            currentAdMetrics.inAoi = false;
+            currentAdMetrics.lastTs = null;
+        }
+        
+        if (interactionError) {
+            interactionError.style.display = 'none';
+        }
+    }
+
+    function validateAllAnswered() {
+        const q1 = document.querySelector('input[name="q1"]:checked')?.value || "";
+        const q2 = document.querySelector('input[name="q2"]:checked')?.value || "";
+        const q3 = document.getElementById('q3').value || "";
+        const q4 = document.getElementById('q4').value.trim();
+        const q5 = getQ5Value();
+
+        const allAnswered = q1 && q2 && q3 && q4 && q5;
+        
+        const errorDiv = document.getElementById('validation-error');
+        if (!allAnswered) {
+            errorDiv.style.display = 'block';
+            errorDiv.scrollIntoView({behavior: "smooth"});
+            return false;
+        } else {
+            errorDiv.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validateAndProceed() {
+        if (validateAllAnswered()) {
+            nextScenario();
+        }
+    }
+
+    function completeBrowsing() {
+        const interactionError = document.getElementById('interaction-error');
+        const interactionStep = document.getElementById('interaction-step');
+        const questionsArea = document.getElementById('questions-area');
+        const video = document.getElementById('main-video');
+
+        if (!adShown) {
+            if (interactionError) {
+                interactionError.style.display = 'block';
+                interactionError.scrollIntoView({ behavior: 'smooth' });
+            }
+            return;
+        }
+
+        isInteractionStep = false;
+        if (video) {
+            video.pause();
+        }
+        interactionStep?.classList.add('hidden');
+        questionsArea?.classList.remove('hidden');
+        questionsArea?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function setupInteractionStep() {
+        const completeBtn = document.getElementById('complete-browsing-btn');
+        if (!completeBtn) return;
+        completeBtn.addEventListener('click', completeBrowsing);
+    }
+
+    function lockVideoSeeking(videoEl) {
+        if (!videoEl) return;
+        let lastAllowedTime = 0;
+
+        videoEl.controls = false;
+        videoEl.addEventListener('timeupdate', () => {
+            if (!videoEl.seeking) {
+                lastAllowedTime = videoEl.currentTime;
+            }
+        });
+
+        videoEl.addEventListener('seeking', () => {
+            const delta = Math.abs(videoEl.currentTime - lastAllowedTime);
+            if (delta > 0.5) {
+                videoEl.currentTime = lastAllowedTime;
+            }
+        });
+
+        videoEl.addEventListener('ended', () => {
+            lastAllowedTime = videoEl.currentTime;
+        });
+    }
+
+    function setupVideoSeekingLock() {
+        const mainVideo = document.getElementById('main-video');
+        const adVideo = document.getElementById('ad-video');
+        lockVideoSeeking(mainVideo);
+        lockVideoSeeking(adVideo);
+
+        if (mainVideo) {
+            mainVideo.addEventListener('click', () => {
+                if (adActive) return;
+                if (mainVideo.paused) {
+                    mainVideo.play().catch(() => {});
+                } else {
+                    mainVideo.pause();
+                }
+            });
+        }
+    }
+
+    function isRankingComplete() {
+        const rank1 = document.getElementById('rank-1')?.value || "";
+        const rank2 = document.getElementById('rank-2')?.value || "";
+        const rank3 = document.getElementById('rank-3')?.value || "";
+        if (!rank1 || !rank2 || !rank3) return false;
+        const uniqueRanks = new Set([rank1, rank2, rank3]);
+        if (uniqueRanks.size < 3) return false;
+
+        const requiredLikert = [
+            'irrit_1', 'irrit_2', 'irrit_3', 'irrit_4', 'irrit_5', 'irrit_6', 'irrit_7',
+            'effect_1', 'effect_2', 'effect_3', 'effect_4'
+        ];
+        return requiredLikert.every(name => document.querySelector(`input[name="${name}"]:checked`));
+    }
+
+    function updateRankingContinueState(showError = false) {
+        const btn = document.getElementById('ranking-continue-btn');
+        const error = document.getElementById('ranking-validation-error');
+        if (!btn || !error) return;
+        const valid = isRankingComplete();
+        btn.disabled = !valid;
+        if (showError) {
+            error.style.display = valid ? 'none' : 'block';
+        } else if (valid) {
+            error.style.display = 'none';
+        }
+    }
+
+    function setupRankingScreen() {
+        const rankingScreen = document.getElementById('ranking-screen');
+        if (!rankingScreen) return;
+
+        const inputs = rankingScreen.querySelectorAll('select, input[type="radio"]');
+        inputs.forEach(input => {
+            input.addEventListener('change', () => updateRankingContinueState(false));
+        });
+
+        const btn = document.getElementById('ranking-continue-btn');
+        if (btn) {
+            btn.addEventListener('click', async () => {
+                if (!isRankingComplete()) {
+                    updateRankingContinueState(true);
+                    rankingScreen.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.textContent = 'Αποστολή...';
+                const waitMsg = document.getElementById('submission-wait');
+                if (waitMsg) {
+                    waitMsg.style.display = 'block';
+                }
+
+                await sendFinalPayload();
+
+                document.getElementById('ranking-screen').classList.add('hidden');
+                document.getElementById('thank-you').classList.remove('hidden');
+                document.getElementById('thank-you').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        updateRankingContinueState(false);
+    }
+
+    function nextScenario() {
+        // 1. Συλλογή δεδομένων του τρέχοντος σεναρίου
+        const payload = collectScenarioResponse();
+        responses.push(payload);
+
+        // 2. Συνεχίζουμε στο επόμενο (αποστολή στο τέλος)
+        currentStep++;
+        if (currentStep < scenarios.length) {
+            loadScenarioUI();
+            document.getElementById('player').scrollIntoView({behavior: "smooth"});
+        } else {
+            // ΤΕΛΟΣ ΠΕΙΡΑΜΑΤΟΣ
+            
+            // Σταμάτημα WebGazer
+            if (webgazerInitialized && typeof webgazer !== 'undefined') {
+                try {
+                    webgazer.pause(); 
+                    webgazer.end(); // Κλείσιμο κάμερας
+                    updateWebgazerStatus(false, 'Eye Tracking: Ολοκληρώθηκε');
+                } catch (e) { console.warn(e); }
+            }
+            
+            // Σταμάτημα βίντεο
+            const mainVideo = document.getElementById('main-video');
+            if (mainVideo) { mainVideo.pause(); mainVideo.src = ''; }
+            
+            const adVideo = document.getElementById('ad-video');
+            if (adVideo) { adVideo.pause(); adVideo.src = ''; }
+            
+            // Εμφάνιση ranking screen
+            document.getElementById('experiment-screen').classList.add('hidden');
+            document.getElementById('ranking-screen').classList.remove('hidden');
+            document.getElementById('ranking-screen').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    setupRankingScreen();
+    setupInteractionStep();
+    setupVideoSeekingLock();
+</script>
+
 </body>
 </html>
