@@ -960,6 +960,38 @@
                 font-size: 12px;
                 line-height: 1.5;
             }
+
+            /* Ad controls - fit to video on small devices */
+            .ad-layer {
+                padding: 18px 12px 58px;
+            }
+
+            .ad-controls {
+                flex-wrap: nowrap;
+                gap: 6px;
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .ad-controls > div:first-child {
+                max-width: 60%;
+            }
+
+            #ad-timer {
+                min-width: 36px;
+                text-align: center;
+            }
+
+            #skip-container {
+                width: auto;
+                margin-top: 0;
+            }
+
+            .skip-btn {
+                min-width: unset;
+                padding: 6px 10px;
+                font-size: 11px;
+            }
         }
 
         /* Landscape orientation fixes */
@@ -1012,6 +1044,7 @@
         <span class="notice-pill">GDPR</span>
         <div>Τα δεδομένα της κάμερας χρησιμοποιούνται αποκλειστικά για τον υπολογισμό του βλέμματος σε πραγματικό χρόνο.</div>
         <div>Δεν αποθηκεύεται βίντεο ή εικόνα του προσώπου σας.</div>
+        <div>Για χρήση του WebGazer απαιτείται διαθέσιμη κάμερα στη συσκευή σας.</div>
     </div>
     <p class="intro-text">Η παρούσα έρευνα διερευνά πώς αντιλαμβάνονται οι χρήστες διαφορετικούς τύπους In-stream διαφημίσεων (ενσωματωμένων στο βίντεο), καθώς και άλλες μορφές ψηφιακής διαφήμισης.</p>
     <p class="intro-text">Η έρευνα πραγματοποιείται στο πλαίσιο διπλωματικής εργασίας. Τα δεδομένα που θα συλλεχθούν είναι απολύτως ανώνυμα και θα χρησιμοποιηθούν αποκλειστικά για ακαδημαϊκούς σκοπούς.</p>
@@ -1234,7 +1267,7 @@
 
     <!-- Ενότητα Β: Παράγοντες Ενόχλησης -->
     <div class="question-block">
-        <h3 class="section-title">Γενική Αντίληψη Ενόχλησης</h3>
+        <h3 class="section-title">Ενότητα Β: Γενική Αντίληψη Ενόχλησης</h3>
         <p class="section-subtitle">Ενοχλητική θεωρώ μια διαφήμιση που...</p>
 
         <label>...με διακόπτει και μου αποσπά την προσοχή.</label>
@@ -1303,7 +1336,7 @@
 
     <!-- Ενότητα Γ: Επίδραση στη Συμπεριφορά -->
     <div class="question-block">
-        <h3 class="section-title">Επίδραση στη Συμπεριφορά</h3>
+        <h3 class="section-title">Ενότητα Γ: Επίδραση στη Συμπεριφορά</h3>
 
         <label>Οι διαφημίσεις μιας επωνυμίας με κάνουν να διαμορφώνω θετική ή αρνητική άποψη για αυτή.</label>
         <div class="likert-scale">
@@ -1344,6 +1377,9 @@
 
     <div id="ranking-validation-error" style="color: #e74c3c; font-weight: bold; margin-bottom: 10px; display: none;">
         ⚠️ Παρακαλώ ολοκληρώστε την κατάταξη και όλες τις ερωτήσεις.
+    </div>
+    <div id="submission-wait" style="color: #1e88e5; font-weight: 600; margin-bottom: 10px; display: none;">
+        Παρακαλώ περιμένετε... γίνεται αποστολή των απαντήσεων.
     </div>
     <button class="btn" id="ranking-continue-btn" disabled>Συνέχεια</button>
 </div>
@@ -2516,6 +2552,10 @@
 
                 btn.disabled = true;
                 btn.textContent = 'Αποστολή...';
+                const waitMsg = document.getElementById('submission-wait');
+                if (waitMsg) {
+                    waitMsg.style.display = 'block';
+                }
 
                 await sendFinalPayload();
 
