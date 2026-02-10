@@ -1177,11 +1177,11 @@
     <div class="question-block">
         <label><strong>Πόσο συχνά χρησιμοποιείτε το web; (1-πολύ περιστασιακά, 5- περισσότερο από 2 ώρες καθημερινά)</strong></label>
         <div class="likert-scale" style="margin-top:8px;">
-            <label class="likert-option"><input type="radio" name="web-frequency" value="1">1</label>
-            <label class="likert-option"><input type="radio" name="web-frequency" value="2">2</label>
-            <label class="likert-option"><input type="radio" name="web-frequency" value="3">3</label>
-            <label class="likert-option"><input type="radio" name="web-frequency" value="4">4</label>
-            <label class="likert-option"><input type="radio" name="web-frequency" value="5">5</label>
+            <label class="likert-option"><input type="radio" name="webFrequency" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="webFrequency" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="webFrequency" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="webFrequency" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="webFrequency" value="5">5</label>
         </div>
     </div>
 
@@ -1789,7 +1789,7 @@
             alert('Παρακαλώ επιλέξτε είδος απασχόλησης.');
             return;
         }
-        if (!document.querySelector('input[name="web-frequency"]:checked')?.value) {
+        if (!document.querySelector('input[name="webFrequency"]:checked')?.value) {
             alert('Παρακαλώ απαντήστε πόσο συχνά χρησιμοποιείτε το web.');
             return;
         }
@@ -2070,7 +2070,7 @@
         const gender = document.getElementById('gender').value || "";
         const education = document.getElementById('education')?.value || "";
         const employment = document.getElementById('employment')?.value || "";
-        const webFrequency = document.querySelector('input[name="web-frequency"]:checked')?.value || "";
+        const webFrequency = document.querySelector('input[name="webFrequency"]:checked')?.value || "";
         const webDevice = document.getElementById('web-device')?.value || "";
         const onlinePurchases = document.getElementById('online-purchases')?.value || "";
         const youtubeFrequency = document.getElementById('youtube-frequency')?.value || "";
@@ -2331,7 +2331,7 @@
             gender: document.getElementById('gender')?.value || "",
             education: document.getElementById('education')?.value || "",
             employment: document.getElementById('employment')?.value || "",
-            webFrequency: document.querySelector('input[name="web-frequency"]:checked')?.value || "",
+            webFrequency: document.querySelector('input[name="webFrequency"]:checked')?.value || "",
             webDevice: document.getElementById('web-device')?.value || "",
             onlinePurchases: document.getElementById('online-purchases')?.value || "",
             youtubeFrequency: document.getElementById('youtube-frequency')?.value || "",
