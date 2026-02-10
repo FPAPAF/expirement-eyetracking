@@ -1051,6 +1051,14 @@
     <p class="intro-text">Θα σας ζητηθεί να παρακολουθήσετε προσομοιώσεις ενός Video Player / περιεχομένου και να αξιολογήσετε την εμπειρία σας.</p>
 
     <div class="question-block">
+        <label><strong>Η συμμετοχή στην έρευνα είναι ανώνυμη και εθελοντική. Τα δεδομένα που θα συλλεχθούν είναι εμπιστευτικά και θα χρησιμοποιηθούν αποκλειστικά για σκοπούς ακαδημαϊκής έρευνας. Για να συνεχίσετε είναι αναγκαία η συγκατάθεσή σας:</strong></label>
+        <label style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+            <input type="checkbox" id="consent" />
+            <span>Δέχομαι να χρησιμοποιηθούν ανώνυμα οι απαντήσεις μου για ερευνητικούς σκοπούς.</span>
+        </label>
+    </div>
+
+    <div class="question-block">
         <label><strong>Ηλικία:</strong></label>
         <input type="number" id="age" min="16" max="100" style="padding: 5px;">
     </div>
@@ -1063,6 +1071,77 @@
             <option value="Γυναίκα">Γυναίκα</option>
             <option value="Άλλο">Άλλο</option>
             <option value="Δεν επιθυμώ να απαντήσω">Δεν επιθυμώ να απαντήσω</option>
+        </select>
+    </div>
+
+    <div class="question-block">
+        <label><strong>Επίπεδο εκπαίδευσης:</strong></label>
+        <select id="education" style="width: 100%; padding: 8px; margin-top:5px;">
+            <option value="" disabled selected>Επιλέξτε...</option>
+            <option value="Απόφοιτος Λυκείου">Απόφοιτος Λυκείου</option>
+            <option value="Απόφοιτος Πανεπιστημίου">Απόφοιτος Πανεπιστημίου</option>
+            <option value="Κάτοχος Μεταπτυχιακού Τίτλου Σπουδών">Κάτοχος Μεταπτυχιακού Τίτλου Σπουδών</option>
+            <option value="Υποψήφιος Διδάκτορας">Υποψήφιος Διδάκτορας</option>
+            <option value="Διδάκτορας">Διδάκτορας</option>
+            <option value="Άλλο">Άλλο</option>
+        </select>
+    </div>
+
+    <div class="question-block">
+        <label><strong>Είδος απασχόλησης:</strong></label>
+        <select id="employment" style="width: 100%; padding: 8px; margin-top:5px;">
+            <option value="" disabled selected>Επιλέξτε...</option>
+            <option value="Ιδιωτικός Υπάλληλος">Ιδιωτικός Υπάλληλος</option>
+            <option value="Δημόσιος Υπάλληλος">Δημόσιος Υπάλληλος</option>
+            <option value="Ελεύθερος Επαγγελματίας">Ελεύθερος Επαγγελματίας</option>
+            <option value="Φοιτητής">Φοιτητής</option>
+            <option value="Άνεργος">Άνεργος</option>
+            <option value="Άλλο">Άλλο</option>
+        </select>
+    </div>
+
+    <div class="question-block">
+        <label><strong>Πόσο συχνά χρησιμοποιείτε το web; (1-πολύ περιστασιακά, 5- περισσότερο από 2 ώρες καθημερινά)</strong></label>
+        <div class="likert-scale" style="margin-top:8px;">
+            <label class="likert-option"><input type="radio" name="web-frequency" value="1">1</label>
+            <label class="likert-option"><input type="radio" name="web-frequency" value="2">2</label>
+            <label class="likert-option"><input type="radio" name="web-frequency" value="3">3</label>
+            <label class="likert-option"><input type="radio" name="web-frequency" value="4">4</label>
+            <label class="likert-option"><input type="radio" name="web-frequency" value="5">5</label>
+        </div>
+    </div>
+
+    <div class="question-block">
+        <label><strong>Με τί συσκευή μπαίνετε στο web συνήθως;</strong></label>
+        <select id="web-device" style="width: 100%; padding: 8px; margin-top:5px;">
+            <option value="" disabled selected>Επιλέξτε...</option>
+            <option value="Desktop/Laptop">Desktop/Laptop</option>
+            <option value="Tablet">Tablet</option>
+            <option value="Κινητό">Κινητό</option>
+        </select>
+    </div>
+
+    <div class="question-block">
+        <label><strong>Πόσο συχνά αγοράζετε online;</strong></label>
+        <select id="online-purchases" style="width: 100%; padding: 8px; margin-top:5px;">
+            <option value="" disabled selected>Επιλέξτε...</option>
+            <option value="Ποτέ">Ποτέ</option>
+            <option value="Σχεδόν ποτέ">Σχεδόν ποτέ</option>
+            <option value="Περιστασιακά">Περιστασιακά</option>
+            <option value="Συχνά">Συχνά</option>
+            <option value="Πολύ συχνά">Πολύ συχνά</option>
+        </select>
+    </div>
+
+    <div class="question-block">
+        <label><strong>Πόσο συχνά χρησιμοποιείτε το YouTube;</strong></label>
+        <select id="youtube-frequency" style="width: 100%; padding: 8px; margin-top:5px;">
+            <option value="" disabled selected>Επιλέξτε...</option>
+            <option value="Ποτέ">Ποτέ</option>
+            <option value="Σχεδόν ποτέ">Σχεδόν ποτέ</option>
+            <option value="Περιστασιακά">Περιστασιακά</option>
+            <option value="Συχνά">Συχνά</option>
+            <option value="Πολύ συχνά">Πολύ συχνά</option>
         </select>
     </div>
 
@@ -1449,7 +1528,7 @@
 
 <script>
     // === Google Sheets Web App URL (αντικατάστησε μετά το Publish) ===
-    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcVrmPJd4r4NWRh1AT3ljdHb_FTIsc938APK8zvGQB_S-4O6f71QWWp5i8KPveLUZmMg/exec";
+    const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx7JFjounftbFUS1z4Ucn7sDIycO1mDYSyePhTi23jD6ryj3zI7HvO0ZhJjysEn4YLiyg/exec";
 
     const scenarios = [
         // ═══════════════════════════════════════════════════════════════
@@ -1616,8 +1695,48 @@
     let calibrationClicks = {};
 
     async function startExperiment() {
-        if(!document.getElementById('age').value) {
+        if (!document.getElementById('consent')?.checked) {
+            alert('Παρακαλώ δηλώστε τη συγκατάθεσή σας για να συνεχίσετε.');
+            return;
+        }
+        if (!document.getElementById('age').value) {
             alert('Παρακαλώ εισάγετε ηλικία.');
+            return;
+        }
+        if (!document.getElementById('gender').value) {
+            alert('Παρακαλώ επιλέξτε φύλο.');
+            return;
+        }
+        if (!document.getElementById('education')?.value) {
+            alert('Παρακαλώ επιλέξτε επίπεδο εκπαίδευσης.');
+            return;
+        }
+        if (!document.getElementById('employment')?.value) {
+            alert('Παρακαλώ επιλέξτε είδος απασχόλησης.');
+            return;
+        }
+        if (!document.querySelector('input[name="web-frequency"]:checked')?.value) {
+            alert('Παρακαλώ απαντήστε πόσο συχνά χρησιμοποιείτε το web.');
+            return;
+        }
+        if (!document.getElementById('web-device')?.value) {
+            alert('Παρακαλώ επιλέξτε τη συσκευή με την οποία μπαίνετε στο web συνήθως.');
+            return;
+        }
+        if (!document.getElementById('online-purchases')?.value) {
+            alert('Παρακαλώ απαντήστε πόσο συχνά αγοράζετε online.');
+            return;
+        }
+        if (!document.getElementById('youtube-frequency')?.value) {
+            alert('Παρακαλώ απαντήστε πόσο συχνά χρησιμοποιείτε το YouTube.');
+            return;
+        }
+        if (!document.getElementById('ad-blocker').value) {
+            alert('Παρακαλώ απαντήστε για τη χρήση ad blocker.');
+            return;
+        }
+        if (!document.getElementById('device').value) {
+            alert('Παρακαλώ επιλέξτε τη συσκευή για το πείραμα.');
             return;
         }
         const webgazerConsent = document.getElementById('webgazer-consent').value;
@@ -1875,6 +1994,12 @@
         const q5 = getQ5Value();
         const age = document.getElementById('age').value || "";
         const gender = document.getElementById('gender').value || "";
+        const education = document.getElementById('education')?.value || "";
+        const employment = document.getElementById('employment')?.value || "";
+        const webFrequency = document.querySelector('input[name="web-frequency"]:checked')?.value || "";
+        const webDevice = document.getElementById('web-device')?.value || "";
+        const onlinePurchases = document.getElementById('online-purchases')?.value || "";
+        const youtubeFrequency = document.getElementById('youtube-frequency')?.value || "";
         const adBlocker = document.getElementById('ad-blocker').value || "";
         const device = document.getElementById('device').value || "";
         const webgazerConsent = document.getElementById('webgazer-consent').value || "";
@@ -1886,6 +2011,12 @@
             timestamp: new Date().toISOString(),
             age,
             gender,
+            education,
+            employment,
+            webFrequency,
+            webDevice,
+            onlinePurchases,
+            youtubeFrequency,
             adBlocker,
             device,
             webgazerConsent,
@@ -2124,6 +2255,12 @@
             // Προσθέτουμε ξανά τα δημογραφικά για σιγουριά
             age: document.getElementById('age')?.value || "",
             gender: document.getElementById('gender')?.value || "",
+            education: document.getElementById('education')?.value || "",
+            employment: document.getElementById('employment')?.value || "",
+            webFrequency: document.querySelector('input[name="web-frequency"]:checked')?.value || "",
+            webDevice: document.getElementById('web-device')?.value || "",
+            onlinePurchases: document.getElementById('online-purchases')?.value || "",
+            youtubeFrequency: document.getElementById('youtube-frequency')?.value || "",
             adBlocker: document.getElementById('ad-blocker')?.value || "",
             device: document.getElementById('device')?.value || "",
             webgazerConsent: document.getElementById('webgazer-consent')?.value || ""
